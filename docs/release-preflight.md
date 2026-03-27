@@ -41,12 +41,19 @@ finish and verify:
 
 ## Expected Blockers Right Now
 
-As of 2026-03-24, the main local blockers should still be:
+As of 2026-03-27, the main local blockers should still be:
 
 - no real Supabase env values yet
 - no real privacy-policy, terms, or support URLs in `config/release-metadata.json` yet
 - no real support email in `config/release-metadata.json` yet
 - no real `seed-authors.json`, which means launch seed SQL is still template-only
+
+Local repo hygiene is otherwise in a good place right now:
+
+- `npx tsc --noEmit` passes
+- `npm run lint` passes
+- `npm audit --json` reports `0` vulnerabilities
+- `npx expo-doctor` passes after clearing local generated Expo/native folders
 
 The native Android package is now set to:
 

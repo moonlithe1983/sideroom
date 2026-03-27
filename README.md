@@ -1,50 +1,98 @@
-# Welcome to your Expo app 👋
+# SideRoom
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+SideRoom is an Android-first Expo / React Native app for moderated peer discussion around questions people often avoid asking publicly. Members can post anonymously or with a handle, browse practical replies, save useful threads, report risky content, block harmful interactions, and use a staff moderation queue when they have elevated access.
 
-## Get started
+## Current State
 
-1. Install dependencies
+- The app is well beyond the Expo starter template.
+- Core flows are implemented: auth shell, onboarding, home feed, search, composer, post detail, comments, saves, reactions, inbox, personal activity, reporting, blocking, moderation, trust surfaces, and policy/support screens.
+- Security foundations are implemented: encrypted session persistence, secure storage helpers, screenshot blocking where supported, biometric relock, Supabase RLS-first backend design, and protected RPC-based data access.
+- The repo is GitHub-ready and locally healthy:
+  - `npx tsc --noEmit` passes
+  - `npm run lint` passes
+  - `npm audit --json` reports `0` vulnerabilities
+  - `npx expo-doctor` passes `17/17`
+- The app is still not launch-ready because the live backend is not configured in this workspace yet.
+
+## What The App Does Right Now
+
+- Email magic-link sign-in
+- Google OAuth wiring through Supabase
+- Handle creation and topic-based onboarding
+- Topic-filtered home feed and search
+- Anonymous or handle-based post creation
+- Post detail with comments, saves, helpful reactions, reporting, and blocking
+- Inbox for replies and positive reactions
+- Me tab for saved posts and authored posts
+- Author controls for `open` / `resolved` thread status
+- Staff-only moderation queue with dismiss, remove, lock, suspend, and ban actions
+- Trust Center plus Policies and Support screens
+
+## What Still Blocks Real Release Work
+
+- No local `.env` or `.env.local` with:
+  - `EXPO_PUBLIC_SUPABASE_URL`
+  - `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- Live Supabase setup is still unverified.
+- Google provider enablement still needs to be completed in Supabase.
+- `config/release-metadata.json` still contains placeholder support, privacy-policy, terms, and marketing values.
+- `supabase/bootstrap/seed-authors.json` still does not exist, so launch seed SQL remains template-only.
+
+## Quick Start
+
+1. Install dependencies:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+2. Run the local readiness checks:
+
+   ```bash
+   npm run backend:preflight
+   npm run release:preflight
+   npx tsc --noEmit
+   npm run lint
+   npm audit --json
+   npx expo-doctor
+   ```
+
+3. Add the real backend config:
+
+   - copy `.env.example` to `.env` or `.env.local`
+   - replace the placeholder Supabase URL and publishable key
+
+4. Start the app:
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+Without real backend env values, the app should boot into the missing-config screen instead of crashing.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Useful Scripts
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- `npm run backend:preflight`
+- `npm run release:preflight`
+- `npm run backend:bundle`
+- `npm run launch:seed`
+- `npm run handoff:docx`
+- `npm run build:preview:android`
+- `npm run build:production:android`
+- `npm run submit:production:android`
 
-## Get a fresh project
+## Key Docs
 
-When you're ready, run:
+- `PROJECT_HANDOFF_2026-03-27.md`
+- `docs/project-status.md`
+- `docs/security-baseline.md`
+- `docs/supabase-setup.md`
+- `docs/launch-readiness-plan.md`
+- `docs/release-preflight.md`
+- `docs/preview-build-runbook.md`
+- `docs/device-smoke-checklist.md`
+- `docs/google-play-submission-checklist.md`
 
-```bash
-npm run reset-project
-```
+## Native Build Note
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+This repo currently stays in the managed / no-local-native-folder state for GitHub cleanliness. If you run `npx expo run:android`, Expo will recreate a local `android/` folder for native debugging. Keep that folder out of Git and remove it again after local native work if you want `expo-doctor` and repo hygiene to stay clean.

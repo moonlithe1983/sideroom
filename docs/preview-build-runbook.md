@@ -40,7 +40,9 @@ For the next step, use `preview`.
 2. `npm run release:preflight`
 3. `npx tsc --noEmit`
 4. `npm run lint`
-5. `npm run build:preview:android`
+5. `npm audit --json`
+6. `npx expo-doctor`
+7. `npm run build:preview:android`
 
 ## After The Build Finishes
 
@@ -89,3 +91,9 @@ Only move to the `production` profile after:
 Before the actual Google Play submission step, use:
 
 - `docs/google-play-submission-checklist.md`
+
+## Native Debug Note
+
+If you use `npx expo run:android` for local native smoke testing, Expo will recreate a local
+`android/` folder. That is expected for native debugging, but it should stay out of Git and can be
+removed again after the smoke pass if you want the repo to return to the clean managed state.
