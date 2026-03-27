@@ -1,0 +1,244 @@
+{
+  "posts": [
+    {
+      "key": "work-career-quick-asks",
+      "author": "steady_mia",
+      "topicSlug": "work-career",
+      "title": "My boss's quick asks keep swallowing my whole day",
+      "body": "I like being helpful, but every 'can you do this really fast?' turns into thirty minutes, then three hours, and then my own work slips. I don't want to sound dramatic or difficult. I just need a way to stop volunteering my entire calendar one tiny favor at a time.",
+      "postType": "advice_request",
+      "isAnonymous": true,
+      "comments": [
+        {
+          "author": "guide_ivy",
+          "body": "A kind boundary can still be a boundary. Try: 'I can get to that after I finish the deadline item I already own. Is that timing okay?'"
+        },
+        {
+          "author": "clearbound_jules",
+          "body": "If everything is urgent, nothing is. Start asking which task should move back when a new quick ask appears."
+        }
+      ],
+      "reactions": [
+        {
+          "author": "guide_ivy",
+          "type": "helpful"
+        },
+        {
+          "author": "late_shift_noah",
+          "type": "upvote"
+        }
+      ],
+      "saves": ["campus_rae", "clearbound_jules"]
+    },
+    {
+      "key": "relationships-dating-calm-or-bored",
+      "author": "campus_rae",
+      "topicSlug": "relationships-dating",
+      "title": "I'm dating someone kind, but I feel calmer when we're apart",
+      "body": "They're thoughtful and consistent and honestly the healthiest person I've dated. The confusing part is that when we're together I feel slightly restless, and when we're apart I feel relieved instead of excited. I can't tell whether I'm bored, scared of something healthy, or just not into it.",
+      "postType": "question",
+      "isAnonymous": false,
+      "comments": [
+        {
+          "author": "steady_mia",
+          "body": "Sometimes calm feels unfamiliar when your past relationships were chaotic. But relief can also be information. You may need more time without forcing a forever answer."
+        },
+        {
+          "author": "guide_ivy",
+          "body": "Ask yourself whether you want more distance from this person specifically, or just more breathing room in general."
+        }
+      ],
+      "reactions": [
+        {
+          "author": "steady_mia",
+          "type": "upvote"
+        },
+        {
+          "author": "guide_ivy",
+          "type": "helpful"
+        }
+      ],
+      "saves": ["late_shift_noah"]
+    },
+    {
+      "key": "money-raise-still-broke",
+      "author": "late_shift_noah",
+      "topicSlug": "money",
+      "title": "I got a raise and still somehow feel broke every month",
+      "body": "The raise was real and I was proud of it, but it disappeared instantly into rent, groceries, and things I had been putting off for months. I thought more money would make me feel safer, but it mostly made me realize how stretched I've already been.",
+      "postType": "story",
+      "isAnonymous": true,
+      "comments": [
+        {
+          "author": "steady_mia",
+          "body": "That sounds less like failure and more like delayed catch-up. A raise often patches old holes before it creates new comfort."
+        },
+        {
+          "author": "clearbound_jules",
+          "body": "One tiny trick: split the raise into 'stability money' and 'future money' right away, even if the future bucket starts small."
+        }
+      ],
+      "reactions": [
+        {
+          "author": "guide_ivy",
+          "type": "upvote"
+        },
+        {
+          "author": "clearbound_jules",
+          "type": "helpful"
+        }
+      ],
+      "saves": ["campus_rae", "guide_ivy"]
+    },
+    {
+      "key": "friends-family-group-chat-dread",
+      "author": "clearbound_jules",
+      "topicSlug": "friends-family",
+      "title": "I love my family, but I dread opening the group chat",
+      "body": "There is one person who can turn any simple update into tension, guilt, or a surprise fight. I mute the chat and then feel guilty. I check the chat and feel drained. I want connection without volunteering to be emotionally on-call.",
+      "postType": "advice_request",
+      "isAnonymous": false,
+      "comments": [
+        {
+          "author": "guide_ivy",
+          "body": "Muting a chat is not abandoning a family. It is sometimes the only way to stay kind when the tone is chaotic."
+        },
+        {
+          "author": "campus_rae",
+          "body": "Could you make a smaller side thread with the family members who feel safe? That gives you connection without the daily stress blast."
+        }
+      ],
+      "reactions": [
+        {
+          "author": "campus_rae",
+          "type": "upvote"
+        },
+        {
+          "author": "guide_ivy",
+          "type": "helpful"
+        }
+      ],
+      "saves": ["steady_mia"]
+    },
+    {
+      "key": "mental-load-cant-switch-off",
+      "author": "guide_ivy",
+      "topicSlug": "mental-load-stress",
+      "title": "I'm not panicking, I just can never fully switch off",
+      "body": "Nothing dramatic is happening, which almost makes it harder to explain. I am just mentally 'on' all the time. Tiny errands feel loud. Rest feels fake because my brain keeps a running list behind everything. I want to stop treating every normal day like a fire drill.",
+      "postType": "question",
+      "isAnonymous": true,
+      "comments": [
+        {
+          "author": "steady_mia",
+          "body": "This sounds like your nervous system forgot what 'nothing urgent' feels like. A good first step is making one daily pocket where you are not allowed to optimize anything."
+        },
+        {
+          "author": "late_shift_noah",
+          "body": "When I feel like this, I need fewer open loops, not better motivation. One written parking lot list helps more than trying to remember everything harder."
+        }
+      ],
+      "reactions": [
+        {
+          "author": "late_shift_noah",
+          "type": "upvote"
+        },
+        {
+          "author": "steady_mia",
+          "type": "helpful"
+        }
+      ],
+      "saves": ["clearbound_jules", "campus_rae"]
+    },
+    {
+      "key": "life-decisions-moving-running-away",
+      "author": "steady_mia",
+      "topicSlug": "life-decisions",
+      "title": "I want to move cities, but I'm scared I'm just running away",
+      "body": "Part of me feels genuinely excited by the idea of starting over somewhere else. Another part of me is worried that I am romanticizing movement because I don't know how to fix my current life from the inside. I can't tell if this is growth or avoidance wearing good shoes.",
+      "postType": "advice_request",
+      "isAnonymous": true,
+      "comments": [
+        {
+          "author": "clearbound_jules",
+          "body": "Sometimes it's both. A move can be a real opportunity and a form of escape. The useful question is whether your plan includes support, structure, and truth instead of just scenery."
+        },
+        {
+          "author": "guide_ivy",
+          "body": "Try a smaller experiment first if you can. A long visit or a job search sprint can teach you a lot without requiring a full identity gamble."
+        }
+      ],
+      "reactions": [
+        {
+          "author": "guide_ivy",
+          "type": "upvote"
+        },
+        {
+          "author": "clearbound_jules",
+          "type": "helpful"
+        }
+      ],
+      "saves": ["late_shift_noah"]
+    },
+    {
+      "key": "school-early-career-internship-behind",
+      "author": "campus_rae",
+      "topicSlug": "school-early-career",
+      "title": "I got the internship I wanted and immediately felt behind everyone",
+      "body": "I worked hard to get here, but now that I have it, I feel like everyone else understands the culture and pace better than I do. I keep thinking somebody is going to realize I am slower than the version of me I used in interviews.",
+      "postType": "story",
+      "isAnonymous": false,
+      "comments": [
+        {
+          "author": "late_shift_noah",
+          "body": "The first week of a good opportunity is often just your brain translating 'important' into 'danger.' You do not need to look natural yet."
+        },
+        {
+          "author": "steady_mia",
+          "body": "Ask one smart, specific question early instead of trying to perform confidence all day. People usually remember curiosity more kindly than silence."
+        }
+      ],
+      "reactions": [
+        {
+          "author": "steady_mia",
+          "type": "upvote"
+        },
+        {
+          "author": "late_shift_noah",
+          "type": "helpful"
+        }
+      ],
+      "saves": ["guide_ivy"]
+    },
+    {
+      "key": "moving-city-life-fresh-start-lonely",
+      "author": "late_shift_noah",
+      "topicSlug": "moving-city-life",
+      "title": "I moved for a fresh start and feel lonelier than before",
+      "body": "I wanted the version of moving where I feel brave and expanded. Instead I mostly feel unanchored. The city is fine, my apartment is fine, my choice was probably fine. I just didn't realize how much 'starting over' also means not being known by anyone for a while.",
+      "postType": "advice_request",
+      "isAnonymous": true,
+      "comments": [
+        {
+          "author": "campus_rae",
+          "body": "A new city usually gets better after repetition, not inspiration. One cafe, one walk, one class, one familiar face at a time."
+        },
+        {
+          "author": "guide_ivy",
+          "body": "It helps me to separate homesickness from regret. Missing your old life does not automatically mean the move was wrong."
+        }
+      ],
+      "reactions": [
+        {
+          "author": "campus_rae",
+          "type": "upvote"
+        },
+        {
+          "author": "guide_ivy",
+          "type": "helpful"
+        }
+      ],
+      "saves": ["steady_mia", "clearbound_jules"]
+    }
+  ]
+}
