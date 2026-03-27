@@ -6,11 +6,12 @@ SideRoom is no longer a starter scaffold. The repository now contains a real And
 
 The current GitHub-ready repo state is:
 
-- `npx tsc --noEmit` passes
+- `npm run typecheck` passes
 - `npm run lint` passes
-- `npm audit --json` reports `0` vulnerabilities
-- `npx expo-doctor` passes `17/17`
+- `npm run audit:check` reports `0` vulnerabilities
+- `npm run doctor` passes `17/17`
 - the app boots into the missing-config gate when backend env values are absent
+- GitHub Actions workflows now cover validation and dependency review on pull requests
 
 ## What Is Implemented
 
@@ -25,6 +26,7 @@ The current GitHub-ready repo state is:
 - Post detail with comments, helpful reactions, saves, reports, and blocking
 - Inbox for replies and positive post reactions
 - Me tab with saved posts and authored posts
+- Self-serve account deletion path for non-staff accounts
 - Author controls for `open` and `resolved` thread status
 - Staff moderation queue with dismiss, remove, lock, suspend, and ban actions
 - Trust Center plus Policies and Support screens
@@ -38,14 +40,16 @@ The current GitHub-ready repo state is:
 - Supabase row-level security across the core schema
 - RPC-first community reads and actions instead of broad raw-table access
 - Moderation audit-log writes
-- Dependency hardening until `npm audit --json` returned `0` vulnerabilities
+- Dependency hardening until the local audit returned `0` vulnerabilities
 - Expo 55 / React Native 0.83 upgrade with type and config fixes
-- Native Android smoke boot completed earlier, then local generated folders were removed so the repo stays clean
+- Native Android smoke boot completed successfully, and any generated local `android/` folder stays ignored by Git for local debugging
+- GitHub Actions validation and dependency-review workflows were added for pull requests
 
 ## What Is Still Blocking Launch
 
 - No live Supabase project has been validated end to end from this workspace yet.
 - No local `.env` or `.env.local` exists with the real Supabase URL and publishable key.
+- The recommended environment split is still only a plan right now: preview/staging and production Supabase projects should be separated before real users arrive.
 - Google still needs to be enabled and tested in the live Supabase project.
 - `config/release-metadata.json` still has placeholder support, privacy-policy, terms, and marketing values.
 - `supabase/bootstrap/seed-authors.json` is still missing, so launch seed SQL remains template-only.
@@ -53,7 +57,7 @@ The current GitHub-ready repo state is:
 
 ## Recommended Next Order
 
-1. Create the live Supabase project and apply all seven migrations.
+1. Create the live Supabase project and apply all eight migrations.
 2. Add the real env values locally and rerun `npm run backend:preflight`.
 3. Enable Google in Supabase and validate both auth methods end to end.
 4. Test the full multi-account loop: onboarding, posting, comments, inbox, moderation, saved posts, and post resolution.

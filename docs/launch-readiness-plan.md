@@ -56,6 +56,7 @@ Because SideRoom will contain personal information, these are release blockers:
 - Logs, analytics, and crash reporting are redacted.
 - Uploads, if any, are private by default.
 - Moderator tools, audit logs, and incident response basics are in place.
+- Account deletion works in-app for normal member accounts and the policy explains any retained safety records honestly.
 - Privacy policy, terms, and user-report handling process are ready before launch.
 
 ## Beta Validation Gate

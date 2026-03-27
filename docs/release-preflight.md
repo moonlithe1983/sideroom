@@ -33,6 +33,7 @@ finish and verify:
 - real beta testing
 - the flows in `docs/device-smoke-checklist.md`
 - the preview-build process in `docs/preview-build-runbook.md`
+- account deletion behavior for account-based releases
 - store screenshots and descriptions
 - privacy policy, terms, support contact, and marketing links
 - reviewer notes and test accounts
@@ -50,10 +51,10 @@ As of 2026-03-27, the main local blockers should still be:
 
 Local repo hygiene is otherwise in a good place right now:
 
-- `npx tsc --noEmit` passes
+- `npm run typecheck` passes
 - `npm run lint` passes
-- `npm audit --json` reports `0` vulnerabilities
-- `npx expo-doctor` passes after clearing local generated Expo/native folders
+- `npm run audit:check` reports `0` vulnerabilities
+- `npm run doctor` passes `17/17` in the current workspace
 
 The native Android package is now set to:
 

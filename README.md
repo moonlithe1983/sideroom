@@ -8,10 +8,11 @@ SideRoom is an Android-first Expo / React Native app for moderated peer discussi
 - Core flows are implemented: auth shell, onboarding, home feed, search, composer, post detail, comments, saves, reactions, inbox, personal activity, reporting, blocking, moderation, trust surfaces, and policy/support screens.
 - Security foundations are implemented: encrypted session persistence, secure storage helpers, screenshot blocking where supported, biometric relock, Supabase RLS-first backend design, and protected RPC-based data access.
 - The repo is GitHub-ready and locally healthy:
-  - `npx tsc --noEmit` passes
+  - `npm run typecheck` passes
   - `npm run lint` passes
-  - `npm audit --json` reports `0` vulnerabilities
-  - `npx expo-doctor` passes `17/17`
+  - `npm run audit:check` reports `0` vulnerabilities
+  - `npm run doctor` passes `17/17`
+- The latest native Android smoke pass installs and launches the app into the expected missing-config screen instead of crashing when backend env values are absent.
 - The app is still not launch-ready because the live backend is not configured in this workspace yet.
 
 ## What The App Does Right Now
@@ -24,6 +25,7 @@ SideRoom is an Android-first Expo / React Native app for moderated peer discussi
 - Post detail with comments, saves, helpful reactions, reporting, and blocking
 - Inbox for replies and positive reactions
 - Me tab for saved posts and authored posts
+- In-app self-serve account deletion for non-staff accounts
 - Author controls for `open` / `resolved` thread status
 - Staff-only moderation queue with dismiss, remove, lock, suspend, and ban actions
 - Trust Center plus Policies and Support screens
@@ -51,10 +53,10 @@ SideRoom is an Android-first Expo / React Native app for moderated peer discussi
    ```bash
    npm run backend:preflight
    npm run release:preflight
-   npx tsc --noEmit
+   npm run typecheck
    npm run lint
-   npm audit --json
-   npx expo-doctor
+   npm run audit:check
+   npm run doctor
    ```
 
 3. Add the real backend config:
@@ -74,6 +76,9 @@ Without real backend env values, the app should boot into the missing-config scr
 
 - `npm run backend:preflight`
 - `npm run release:preflight`
+- `npm run typecheck`
+- `npm run doctor`
+- `npm run audit:check`
 - `npm run backend:bundle`
 - `npm run launch:seed`
 - `npm run handoff:docx`
@@ -93,6 +98,19 @@ Without real backend env values, the app should boot into the missing-config scr
 - `docs/device-smoke-checklist.md`
 - `docs/google-play-submission-checklist.md`
 
+## GitHub Automation
+
+This repo now includes GitHub Actions workflows for:
+
+- validation on pull requests and pushes to `main`
+- dependency review on pull requests
+
+Recommended GitHub settings to turn on manually for `main`:
+
+- require pull request review before merging
+- require status checks before merging
+- require conversation resolution before merging
+
 ## Native Build Note
 
-This repo currently stays in the managed / no-local-native-folder state for GitHub cleanliness. If you run `npx expo run:android`, Expo will recreate a local `android/` folder for native debugging. Keep that folder out of Git and remove it again after local native work if you want `expo-doctor` and repo hygiene to stay clean.
+This repo is intended to stay GitHub-clean even when you do native debugging locally. If you run `npx expo run:android`, Expo will recreate a local `android/` folder for native work. Keep that folder out of Git, and remove it later only if you want the workspace back in the managed-only shape.

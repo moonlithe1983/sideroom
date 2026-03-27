@@ -1,6 +1,6 @@
 import { Link, type Href, useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 
 import { useAppAuth } from '@/components/auth/auth-provider';
 import { PostCard } from '@/components/community/post-card';
@@ -80,6 +80,8 @@ export default function ProfileScreen() {
   const [myPosts, setMyPosts] = useState<CommunityProfilePost[]>([]);
   const [activityLoading, setActivityLoading] = useState(true);
   const [activityError, setActivityError] = useState<string | null>(null);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [deletionAttempted, setDeletionAttempted] = useState(false);
 
   const loadActivity = useCallback(async () => {
     setActivityLoading(true);
@@ -104,6 +106,40 @@ export default function ProfileScreen() {
 
   const activeOwnPosts = myPosts.filter((post) => post.status !== 'removed').length;
   const moderatedOwnPosts = myPosts.filter((post) => post.moderation_status !== 'clean').length;
+  const accountDeletionDisabled = deletingAccount;
+  const deleteAccountLabel = auth.isStaff
+    ? 'Staff deletion requires support'
+    : deletingAccount
+      ? 'Deleting account...'
+      : 'Delete my account';
+
+  const handleDeleteAccount = useCallback(() => {
+    Alert.alert(
+      'Delete your SideRoom account?',
+      auth.isStaff
+        ? 'Staff accounts are not eligible for self-serve deletion because moderation audit trails must be preserved. Use the support path instead.'
+        : 'This permanently deletes your account, profile, saved posts, authored posts, comments, reactions, blocks, and notifications in this environment. This action cannot be undone.',
+      auth.isStaff
+        ? [{ text: 'OK', style: 'cancel' }]
+        : [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+            },
+            {
+              text: 'Delete my account',
+              style: 'destructive',
+              onPress: () => {
+                setDeletionAttempted(true);
+                setDeletingAccount(true);
+                void auth.deleteAccount().finally(() => {
+                  setDeletingAccount(false);
+                });
+              },
+            },
+          ]
+    );
+  }, [auth]);
 
   return (
     <ScrollView contentContainerStyle={[styles.content, { backgroundColor: background }]}>
@@ -249,7 +285,34 @@ export default function ProfileScreen() {
         <ThemedText style={{ color: muted }}>
           Last seen: {auth.account?.last_seen_at ? new Date(auth.account.last_seen_at).toLocaleString() : 'Unknown'}
         </ThemedText>
+        <ThemedText style={{ color: muted }}>
+          Use sign out for this device only. Use account deletion only if you want to permanently
+          remove your SideRoom account from this environment.
+        </ThemedText>
         <PrimaryButton label="Sign out" onPress={() => void auth.signOut()} tone="secondary" />
+      </SectionCard>
+
+      <SectionCard eyebrow="Account Deletion" title="Permanently remove your account">
+        <ThemedText style={{ color: muted }}>
+          This is the self-serve deletion path required for account-based releases. It should remove
+          your SideRoom account data from the active backend, not just sign you out locally.
+        </ThemedText>
+        <ThemedText style={{ color: muted }}>
+          Staff and moderator accounts stay support-only so moderation audit trails are not deleted
+          casually.
+        </ThemedText>
+        {deletionAttempted && auth.authError ? (
+          <ThemedText style={{ color: danger }}>{auth.authError}</ThemedText>
+        ) : null}
+        <PrimaryButton
+          disabled={accountDeletionDisabled}
+          label={deleteAccountLabel}
+          onPress={handleDeleteAccount}
+          tone="danger"
+        />
+        <Link href={'/policies' as Href} style={styles.link}>
+          <ThemedText type="link">Open Policies and Support</ThemedText>
+        </Link>
       </SectionCard>
     </ScrollView>
   );

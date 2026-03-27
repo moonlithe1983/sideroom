@@ -10,12 +10,14 @@ SideRoom is still a serious Android-first MVP foundation, not a starter shell. T
 The most important work completed on 2026-03-27 was not feature work. It was engineering hardening:
 
 - the Expo and React Native toolchain was upgraded to the Expo 55 line
-- dependency security issues were remediated until `npm audit --json` returned `0` vulnerabilities
+- dependency security issues were remediated until the local audit returned `0` vulnerabilities
 - a real native Android debug build was created and installed on the emulator
-- the app was smoke-tested in that native Android environment
+- the app was smoke-tested repeatedly in that native Android environment
 - the app launched successfully and rendered the expected missing-backend setup gate instead of crashing
-- the workspace was then cleaned back to the managed / no-local-native-folder state so GitHub and `expo-doctor` stay clean
+- the latest smoke pass recreated a local `android/` folder, and that folder remains ignored by Git
 - the local repo is now connected to GitHub at `https://github.com/moonlithe1983/sideroom`
+- GitHub Actions validation and dependency-review workflows were added for pull requests
+- a self-serve account deletion path was added for normal member accounts, backed by a new Supabase migration
 
 The product is still not launch-ready. The biggest remaining blockers are still live Supabase setup and validation, seeded launch content, live Google auth enablement and testing, stronger staff-security controls, and beta / Google Play readiness work.
 
@@ -34,6 +36,7 @@ The product is still not launch-ready. The biggest remaining blockers are still 
 - Post detail with comments, votes, helpful marks, saves, reporting, and blocking.
 - Inbox tab for replies and positive post reactions.
 - Me tab with saved posts and authored posts.
+- Self-serve account deletion for non-staff accounts from the Me tab.
 - Author controls to mark a post `resolved` or reopen it.
 - Staff-only moderation tab with report review actions.
 - Suspended and banned accounts now stop at a dedicated account-status gate instead of entering the main app shell.
@@ -50,10 +53,12 @@ The product is still not launch-ready. The biggest remaining blockers are still 
 - Added dependency overrides for patched `minimatch` and `brace-expansion` so the dependency audit is clean.
 - Removed now-invalid Expo config fields from `app.json` that `expo-doctor` rejected after the SDK upgrade.
 - Normalized the app color-scheme hook so the React Native 0.83 `ColorSchemeName` typing change does not break compilation.
-- Performed a native Android emulator smoke test using `expo run:android`.
+- Performed repeated native Android emulator smoke tests using `expo run:android`.
 - Generated a local native `android/` folder and a native debug APK as part of that smoke test.
-- Removed the generated local `android/` and `.expo/` folders afterward so the tracked repo stays in a clean managed state.
+- The latest smoke pass left the generated local `android/` folder in place, and it remains ignored by Git.
 - Initialized the local Git repository, connected `origin`, and pushed `main` to GitHub.
+- Added GitHub Actions workflows for validation and dependency review.
+- Added an account-deletion migration plus client/UI support for non-staff self-serve deletion.
 
 ### Security and privacy protections implemented
 
@@ -64,7 +69,7 @@ The product is still not launch-ready. The biggest remaining blockers are still 
 - Supabase row-level security on the core data model.
 - Sanitized RPCs for public/mobile reads instead of broad raw-table reads.
 - Protected report, block, moderation, notification, and personal-activity RPCs.
-- Dependency hardening completed until `npm audit --json` reported `0` vulnerabilities.
+- Dependency hardening completed until `npm run audit:check` reported `0` vulnerabilities.
 
 ### Important reality check
 
@@ -156,6 +161,8 @@ Apply these migrations in order:
    - Saved-post and authored-post activity RPCs for the Me tab.
 7. `supabase/migrations/20260323_000007_post_resolution.sql`
    - Author-controlled post resolution and server-enforced locked-post reply protection.
+8. `supabase/migrations/20260327_000008_account_deletion.sql`
+   - Self-serve account deletion for non-staff accounts.
 
 For the easiest fresh database setup, use:
 
@@ -213,29 +220,26 @@ The 2026-03-27 emulator smoke pass used:
 Important local detail:
 
 - `expo run:android` created a local `android/` folder in this workspace.
-- That folder was intentionally removed after the smoke pass.
-- The workspace is currently back in the managed / no-local-native-folder state.
-- If native local debugging is needed again, rerun `npx expo run:android` and expect Expo to recreate `android/` locally.
+- The latest smoke pass recreated that folder and it is still present locally right now.
+- The folder is ignored by Git and should not be committed.
+- If you want the workspace back in the managed-only shape later, you can remove `android/` after native local debugging is finished.
 
 Artifacts created by the smoke pass:
 
 - native debug APK:
   - `android/app/build/outputs/apk/debug/app-debug.apk`
 
-That APK path is only available immediately after a local native build. It is not retained in the
-current cleaned workspace.
+That APK path is available after a local native build and was present in the workspace after the
+latest smoke pass.
 
 ### Expo Doctor state on 2026-03-27
 
-`npx expo-doctor` now passes cleanly:
+`npm run doctor` now passes cleanly:
 
 - `17/17` checks passed
 
-Why this changed:
-
-- the workspace now has a real `.git` directory
-- the local `.expo/` cache folder was removed
-- the generated local `android/` folder was removed after the native smoke pass
+This currently passes even with the locally generated `android/` folder present because that folder
+is ignored by Git and the repo metadata is otherwise healthy.
 
 ## Local Run and Verification Commands
 
@@ -247,11 +251,18 @@ Use these first when resuming:
 - `npm run backend:bundle`
 - `npm run handoff:docx`
 - `npm run launch:seed`
-- `npx tsc --noEmit`
+- `npm run typecheck`
 - `npm run lint`
-- `npm audit --json`
-- `npx expo-doctor`
+- `npm run audit:check`
+- `npm run doctor`
 - `npx expo start`
+
+GitHub workflows now mirror the main repo checks on pull requests:
+
+- typecheck
+- lint
+- dependency audit
+- Expo Doctor
 
 For local native Android debug work in this workspace:
 
@@ -262,16 +273,16 @@ For local native Android debug work in this workspace:
 
 These commands passed on 2026-03-27:
 
-- `npx tsc --noEmit`
+- `npm run typecheck`
 - `npm run lint`
-- `npm audit --json`
-- `npx expo-doctor`
+- `npm run audit:check`
+- `npm run doctor`
 
-`npm audit --json` reported:
+`npm run audit:check` reported:
 
 - `0` vulnerabilities
 
-`npx expo-doctor` reported:
+`npm run doctor` reported:
 
 - `17/17` checks passed
 
@@ -306,6 +317,7 @@ Additional smoke-test validation completed on 2026-03-27:
   - `Supabase setup required`
   - `MISSING ENVIRONMENT`
   - the missing variable names
+- A dev-only Metro / Expo CLI warning banner can appear if the dev server is not still attached after install, but the app itself continues running and this did not indicate a product crash.
 - No additional runtime code fix was required during this smoke pass.
 
 ## What Has Not Been Verified Yet
@@ -318,6 +330,7 @@ Additional smoke-test validation completed on 2026-03-27:
 - End-to-end notification generation using multiple real accounts.
 - End-to-end moderation actions using moderator / admin accounts.
 - End-to-end validation of saved posts, authored-post history, and author resolution flows against live data.
+- End-to-end validation of account deletion against the live backend.
 - EAS preview builds on Android.
 - EAS production builds on Android.
 - Real-device validation of biometrics and screenshot blocking after the Expo 55 toolchain upgrade.
@@ -333,7 +346,7 @@ Additional smoke-test validation completed on 2026-03-27:
 - Protected RPCs for all core community surfaces added so far.
 - Moderation audit-log writes through `public.moderation_actions`.
 - Suspended and banned accounts are blocked explicitly in the client shell as well as by backend readiness checks.
-- The current dependency tree is locally hardened and `npm audit --json` is clean.
+- The current dependency tree is locally hardened and `npm run audit:check` is clean.
 
 ### Still missing before handling real personal data at scale
 
@@ -347,6 +360,7 @@ Additional smoke-test validation completed on 2026-03-27:
 ## Product Gaps Still Open
 
 - Live Google auth validation against the real Supabase project.
+- Preview/staging and production backend separation still need to be finalized operationally.
 - Seeded launch content across all topics.
 - Preview and production release builds through EAS.
 - Placeholder support, privacy-policy, terms, and marketing values still need to be replaced in `config/release-metadata.json`.
@@ -376,7 +390,7 @@ Current recommendation as of 2026-03-27:
 
 ## Recommended Next-Step Order
 
-1. Create the live Supabase project and apply all seven migrations.
+1. Create the live Supabase project and apply all eight migrations.
 2. Add the real env vars locally and validate the auth callback flow.
 3. Enable Google in Supabase auth providers and keep `sideroom://auth/callback` configured.
 4. Test the full community loop with multiple accounts:
@@ -393,13 +407,14 @@ Current recommendation as of 2026-03-27:
    - saved posts / my posts
    - resolve / reopen post
 5. Seed strong launch content so first-time users do not hit an empty app.
-6. Add the real env values locally, rerun `npm run release:preflight`, and clear the remaining repo-side blockers.
-7. Use `docs/preview-build-runbook.md` to generate Android preview builds with the current `com.moonlithe.sideroom` package name.
-8. Use `docs/device-smoke-checklist.md` to test auth, onboarding, posting, moderation, inbox, restrictions, trust surfaces, and the Policies and Support screen on real devices.
-9. Replace the placeholder support, privacy-policy, terms, and marketing values in `config/release-metadata.json`.
-10. Use `docs/google-play-submission-checklist.md` to prepare listing, policy, and testing-track requirements before public release.
-11. Tighten staff security with MFA, least-privilege rules, and redacted operational logging.
-12. Run a closed beta before any public store submission.
+6. Keep preview/staging and production Supabase projects separate before real users arrive.
+7. Add the real env values locally, rerun `npm run release:preflight`, and clear the remaining repo-side blockers.
+8. Use `docs/preview-build-runbook.md` to generate Android preview builds with the current `com.moonlithe.sideroom` package name.
+9. Use `docs/device-smoke-checklist.md` to test auth, onboarding, posting, moderation, inbox, restrictions, trust surfaces, and the Policies and Support screen on real devices.
+10. Replace the placeholder support, privacy-policy, terms, and marketing values in `config/release-metadata.json`.
+11. Use `docs/google-play-submission-checklist.md` to prepare listing, policy, and testing-track requirements before public release.
+12. Tighten staff security with MFA, least-privilege rules, and redacted operational logging.
+13. Run a closed beta before any public store submission.
 
 ## First Session Back Checklist
 
@@ -410,13 +425,14 @@ If I were picking this up fresh, I would do the following in order:
    - `docs/security-baseline.md`
    - `docs/supabase-setup.md`
    - `docs/launch-readiness-plan.md`
-2. Assume the workspace should stay in the no-local-native-folder managed workflow unless you intentionally need a fresh native debug build.
+2. Assume the workspace should keep local native debug artifacts out of Git, even if `android/` exists locally after smoke testing.
 3. Confirm `.env` is populated with the real Supabase URL and publishable key.
-4. Create or inspect the Supabase project and verify all seven migrations are applied in order.
+4. Create or inspect the Supabase project and verify all eight migrations are applied in order.
 5. Run:
-   - `npx tsc --noEmit`
+   - `npm run typecheck`
    - `npm run lint`
-   - `npm audit --json`
+   - `npm run audit:check`
+   - `npm run doctor`
    - `npm run release:preflight`
 6. If continuing native Android local work, set:
    - `JAVA_HOME=C:\Program Files\Android\Android Studio\jbr`
@@ -426,7 +442,7 @@ If I were picking this up fresh, I would do the following in order:
 8. Enable Google in Supabase auth providers, then test the full flow with multiple accounts and at least one staff account before building more features.
 
 For the easiest fresh database setup, generate and use `supabase/bootstrap/full-setup.sql` instead
-of manually copying seven separate files.
+of manually copying eight separate files.
 
 For the easiest launch-content setup after the backend is live, use
 `data/launch-seed/seed-content.json`, fill `supabase/bootstrap/seed-authors.json`, and run
@@ -441,8 +457,8 @@ For the easiest launch-content setup after the backend is live, use
 - The staff moderation tab is hidden for non-staff users in the tab layout and still guards access in the screen itself.
 - Removed posts are intentionally not openable through the normal post-detail route.
 - The repo is now connected to GitHub at `https://github.com/moonlithe1983/sideroom`.
-- The local `android/` folder does **not** currently exist because it was removed after the native smoke test cleanup.
-- If you recreate `android/` with `npx expo run:android`, keep it out of Git and remove it again when you are done if you want the repo to stay in the clean managed state.
+- The local `android/` folder currently exists from the latest native smoke pass and is ignored by Git.
+- If you later remove and recreate `android/` with `npx expo run:android`, keep it out of Git and remove it again when you want the workspace back in the clean managed state.
 - The native smoke test proved the missing-config gate is working correctly, so the next meaningful smoke test should happen **after** real Supabase env values are provided.
 - If the handoff needs to be refreshed after doc updates, run `npm run handoff:docx` to rebuild the newest dated Word handoff from the newest dated markdown handoff.
 
@@ -468,7 +484,7 @@ The most important changes from the last handoff are:
 - the dependency tree is now locally hardened and audit-clean
 - the Expo / React Native stack is now on the Expo 55 line
 - the app has passed a real native Android emulator smoke boot into the missing-config gate
-- the workspace has been cleaned back to the managed / GitHub-friendly state and `expo-doctor` now passes cleanly
+- the repo remains GitHub-clean even though the latest local smoke pass recreated an ignored `android/` folder, and `npm run doctor` still passes cleanly
 - the live backend is still not connected
 
 The next person should start with live Supabase setup and end-to-end validation, not by redesigning the product or rebuilding the current app structure.

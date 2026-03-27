@@ -31,6 +31,7 @@ type AuthContextValue = {
   account: AppAccount;
   authError: string | null;
   completeOnboarding: (input: CompleteOnboardingInput) => Promise<boolean>;
+  deleteAccount: () => Promise<boolean>;
   isConfigured: boolean;
   isHandlingAuthRedirect: boolean;
   isLoading: boolean;
@@ -406,6 +407,36 @@ export function AuthProvider({ children }: PropsWithChildren) {
     [loadUserContext, supabase]
   );
 
+  const deleteAccount = useCallback(async () => {
+    if (!supabase) {
+      setAuthError('Supabase is not configured yet.');
+      return false;
+    }
+
+    setAuthError(null);
+    setNotice(null);
+
+    const { error } = await supabase.rpc('delete_my_account');
+
+    if (error) {
+      setAuthError(error.message);
+      return false;
+    }
+
+    await supabase.auth.signOut().catch(() => undefined);
+
+    startTransition(() => {
+      setSession(null);
+      setUser(null);
+      setAccount(null);
+      setProfile(null);
+    });
+    setNotice(
+      'Your SideRoom account and related community data were deleted from this app environment.'
+    );
+    return true;
+  }, [supabase]);
+
   const signOut = useCallback(async () => {
     if (!supabase) {
       return;
@@ -427,6 +458,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       account,
       authError,
       completeOnboarding,
+      deleteAccount,
       isConfigured: supabaseConfig.isConfigured,
       isHandlingAuthRedirect,
       isLoading,
@@ -449,6 +481,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       account,
       authError,
       completeOnboarding,
+      deleteAccount,
       isHandlingAuthRedirect,
       isLoading,
       lastMagicLinkEmail,

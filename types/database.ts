@@ -394,6 +394,10 @@ export type Database = {
         };
         Returns: string;
       };
+      delete_my_account: {
+        Args: Record<PropertyKey, never>;
+        Returns: boolean;
+      };
       complete_onboarding: {
         Args: {
           input_handle: string;
