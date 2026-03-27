@@ -20,7 +20,7 @@ export const accomplishedBeforeToday = [
   {
     title: 'The engineering toolchain has been hardened.',
     description:
-      'The repo is on Expo 55, the dependency audit is clean, and the main validation commands pass locally.',
+      'The repo is on Expo 55, the dependency audit is clean, the main validation commands pass locally, and GitHub Actions now mirror those checks on pull requests.',
   },
 ] as const;
 
@@ -42,7 +42,7 @@ export const currentCodebaseReality = [
   {
     title: 'Launch readiness still depends on live services.',
     description:
-      'The app shell is healthy, but real auth, real data, moderation validation, and release operations still require a live Supabase project and final release metadata.',
+      'The app shell is healthy, but real auth, real data, moderation validation, preview-versus-production backend separation, and release operations still require a live Supabase setup and final release metadata.',
     status: 'Still blocked',
     tone: 'warning' as const,
   },
@@ -52,7 +52,7 @@ export const nextBuildSteps = [
   {
     title: 'Connect the live backend.',
     description:
-      'Create the Supabase project, add the real env values locally, apply all seven migrations, and verify email plus Google auth end to end.',
+      'Create the Supabase project, add the real env values locally, apply all eight migrations, and verify email plus Google auth end to end.',
   },
   {
     title: 'Pressure-test the real community loop.',
@@ -67,7 +67,7 @@ export const nextBuildSteps = [
   {
     title: 'Move into preview-build and beta work.',
     description:
-      'Run release preflight, create preview Android builds, execute the device smoke checklist, and close trust or moderation gaps before broader beta.',
+      'Run release preflight, create preview Android builds against a non-production backend, execute the device smoke checklist, and close trust or moderation gaps before broader beta.',
   },
 ] as const;
 
@@ -91,7 +91,7 @@ export const clientSecurityCommitments = [
 
 export const backendSecurityRequirements = [
   {
-    title: 'Verify all seven Supabase migrations in a live project.',
+    title: 'Verify all eight Supabase migrations in a live project.',
     description:
       'Posts, comments, saves, reports, notifications, blocked-user rows, and moderation flows still need end-to-end validation under the real auth and row-level security rules.',
   },

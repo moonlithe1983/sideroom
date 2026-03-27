@@ -5,12 +5,15 @@
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
+    "typecheck": "tsc --noEmit",
     "backend:preflight": "node ./scripts/supabase-preflight.js",
     "release:preflight": "node ./scripts/release-preflight.js",
     "backend:bundle": "node ./scripts/build-supabase-bundle.js",
     "handoff:docx": "PowerShell -ExecutionPolicy Bypass -File ./scripts/build-handoff-docx.ps1",
     "launch:seed": "node ./scripts/build-launch-seed.js",
     "android": "expo start --android",
+    "doctor": "expo-doctor",
+    "audit:check": "npm audit --audit-level=high",
     "build:preview:android": "npx eas-cli build --platform android --profile preview",
     "build:production:android": "npx eas-cli build --platform android --profile production",
     "submit:production:android": "npx eas-cli submit --platform android --profile production",
@@ -55,6 +58,7 @@
     "@types/react": "~19.2.10",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~55.0.0",
+    "expo-doctor": "^1.18.13",
     "typescript": "~5.9.2"
   },
   "overrides": {

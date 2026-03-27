@@ -8,6 +8,7 @@ export const privacyPromises = [
   'Anonymous posts hide your public handle from the feed and search results, while still remaining traceable to moderators for safety review.',
   'Community reads flow through sanitized RPCs instead of broad raw-table access so public screens do not expose internal identity data.',
   'Screenshot blocking, app-switcher privacy protection, and biometric relock are enabled where device support allows it.',
+  'Normal member accounts now have an in-app deletion path, while staff-account deletion stays support-managed so moderation audit trails are not casually erased.',
 ] as const;
 
 export const moderationBoundaries = [
@@ -27,7 +28,7 @@ export const reportFlow = [
 export const launchTrustBlockers = [
   'A live Supabase project still needs full end-to-end validation for auth, row-level security, moderation, and notifications.',
   'Staff MFA, redacted analytics and crash reporting, and operational incident-response steps still need to be finalized.',
-  'A public privacy-policy URL, terms URL, and support contact still need to be published before app-store submission.',
+  'A public privacy-policy URL, terms URL, support contact, and deletion-support page still need to be published before app-store submission.',
   'Closed-beta testing still needs to prove that moderation response, trust, and crash stability are good enough for launch.',
 ] as const;
 

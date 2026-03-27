@@ -157,6 +157,17 @@ export default function PoliciesScreen() {
           ))
         )}
       </SectionCard>
+
+      <SectionCard eyebrow="Account Deletion" title="What the current app supports">
+        <ThemedText style={[styles.body, { color: muted }]}>
+          Normal member accounts now have an in-app deletion path from the Me tab. Staff accounts
+          stay support-managed so moderation audit trails are not removed casually.
+        </ThemedText>
+        <ThemedText style={[styles.body, { color: muted }]}>
+          Before store submission, the public support and privacy pages should explain the same
+          behavior using the final live support contact.
+        </ThemedText>
+      </SectionCard>
     </ScrollView>
   );
 }

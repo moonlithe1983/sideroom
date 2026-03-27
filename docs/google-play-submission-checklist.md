@@ -10,6 +10,7 @@ This is the last-mile operational list for shipping, not for feature development
 ## Store Account
 
 - Google Play Console account is active.
+- Public developer / publisher identity is finalized and matches the brand, privacy policy, and support contact.
 - Organization, tax, and payments details are complete if monetization is planned.
 - The app name is cleared for brand and legal risk.
 
@@ -33,7 +34,7 @@ This is the last-mile operational list for shipping, not for feature development
 - Support email or support URL is live.
 - Data safety form is filled out from the real implementation.
 - Content rating questionnaire is answered conservatively.
-- Account deletion/support flow is documented if required by the final implementation.
+- Account deletion is available in-app for normal member accounts and the web/support documentation matches the real behavior.
 - The Trust Center and in-app safety language match the store description and policy claims.
 
 ## Release Quality

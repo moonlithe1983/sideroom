@@ -140,6 +140,14 @@ Any security, privacy, auth, crash, or data-loss issue is a release blocker.
 - Open the Trust Center.
 - Confirm the language is clear, trustworthy, and not obviously placeholder copy.
 
+### 13. Account Deletion
+
+- Open the Me tab and find the account deletion path without hunting for it.
+- Confirm non-staff accounts can start deletion in-app.
+- Confirm staff accounts are redirected to support instead of deleting moderation audit context casually.
+- Confirm deleted test accounts can no longer sign back in without creating a fresh account path.
+- Confirm the app does not leave a broken half-signed-in state after deletion.
+
 ## Things To Capture During Testing
 
 - device model
@@ -160,4 +168,5 @@ Do not move to broader beta or store submission if any of these fail:
 - blocked content still appearing where it should be hidden
 - moderator actions not sticking
 - suspended or banned accounts entering the main app shell
+- account deletion being missing, misleading, or leaving orphaned account access behind
 - seeded content or first-run experience feeling empty and dead

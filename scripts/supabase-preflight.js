@@ -16,6 +16,7 @@ const expectedMigrations = [
   '20260323_000005_moderation_tools.sql',
   '20260323_000006_personal_activity.sql',
   '20260323_000007_post_resolution.sql',
+  '20260327_000008_account_deletion.sql',
 ];
 
 const envCandidateFiles = ['.env', '.env.local', '.env.development', '.env.development.local'];
@@ -261,7 +262,7 @@ function main() {
   console.log('  2. Copy .env.example to .env and replace the placeholder values.');
   console.log(`  3. Add ${redirectUri} to Supabase auth redirects.`);
   console.log('  4. Enable Google in Supabase auth providers.');
-  console.log('  5. Apply the seven SQL migrations.');
+  console.log('  5. Apply the eight SQL migrations.');
   console.log('  6. Run this command again until the red items are gone.');
 
   if (allIssues.length === 0) {

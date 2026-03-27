@@ -9,6 +9,13 @@ Create a local env file from `.env.example` and fill in:
 
 Do not commit the real values.
 
+Recommended environment split for this app:
+
+- one Supabase project for preview / staging / closed-beta validation
+- one separate Supabase project for production
+
+Do not point every development and preview build at the production backend from day one.
+
 ## Fast Preflight Check
 
 Run this before trying live auth or real data:
@@ -22,7 +29,7 @@ That command checks:
 - whether a local env file exists
 - whether the required Supabase variables are present and not still placeholders
 - whether `app.json` still matches the expected `sideroom://auth/callback` redirect setup
-- whether all seven migration files are present locally
+- whether all eight migration files are present locally
 
 It does not contact Supabase. It is just the "are we ready to start real setup?" traffic light.
 
@@ -31,7 +38,7 @@ It does not contact Supabase. It is just the "are we ready to start real setup?"
 - `supabase/bootstrap/full-setup.sql`
 
 That file is the easiest copy-paste path for a brand-new Supabase project. It concatenates all
-seven migrations in the correct order. Do not edit it by hand; edit the files in
+eight migrations in the correct order. Do not edit it by hand; edit the files in
 `supabase/migrations/` and regenerate it instead.
 
 `npm run launch:seed` generates starter launch content SQL from:
@@ -76,6 +83,7 @@ If you prefer the source files directly, apply the SQL in:
 - `supabase/migrations/20260323_000005_moderation_tools.sql`
 - `supabase/migrations/20260323_000006_personal_activity.sql`
 - `supabase/migrations/20260323_000007_post_resolution.sql`
+- `supabase/migrations/20260327_000008_account_deletion.sql`
 
 Those migrations create:
 
@@ -92,6 +100,7 @@ Those migrations create:
 - a staff moderation queue with protected resolve actions and audit-log writes
 - personal activity RPCs for saved posts and authored posts in the Me tab
 - author-controlled post resolution plus server-enforced locked-post reply protection
+- self-serve account deletion for non-staff accounts
 
 ## Launch Content Seeding
 
@@ -132,3 +141,5 @@ After the project is created and the migration is applied:
 15. Confirm `get_my_posts` returns only the signed-in user's authored posts, including moderation and post-status states needed for transparent account history.
 16. Confirm authors can use `set_my_post_status` to switch only their own posts between `open` and `resolved`.
 17. Confirm locked posts reject new comments both in the UI and through the `create_comment` RPC.
+18. Confirm `delete_my_account` deletes a normal member account cleanly and signs that user out of the app.
+19. Confirm moderator/admin accounts are blocked from self-serve deletion so moderation audit trails are preserved.

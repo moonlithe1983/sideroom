@@ -19,7 +19,7 @@ Before building anything:
 1. Run `npm run release:preflight`.
 2. Resolve all red blockers from that command.
 3. Confirm the real Supabase env values are present locally.
-4. Confirm the real Supabase project is live and all migrations are applied.
+4. Confirm the preview/staging Supabase project is live and all migrations are applied.
 5. Confirm the Google auth provider is enabled.
 6. Confirm the native identifiers in `app.json` are still correct:
    - `com.moonlithe.sideroom` for Android
@@ -38,10 +38,10 @@ For the next step, use `preview`.
 
 1. `npm install`
 2. `npm run release:preflight`
-3. `npx tsc --noEmit`
+3. `npm run typecheck`
 4. `npm run lint`
-5. `npm audit --json`
-6. `npx expo-doctor`
+5. `npm run audit:check`
+6. `npm run doctor`
 7. `npm run build:preview:android`
 
 ## After The Build Finishes
@@ -62,6 +62,7 @@ Do not call the preview build successful until all of these are true:
 - sign-in works on real devices
 - onboarding works on real devices
 - posting, comments, search, saves, inbox, block, and moderation all work
+- account deletion works for normal member accounts
 - restricted accounts stop at the right screen
 - the Trust Center and safety language feel clear and intentional
 - no P0 or P1 issues remain
