@@ -3,71 +3,71 @@ export const disclaimerText =
 
 export const accomplishedBeforeToday = [
   {
-    title: 'Product scope was defined.',
+    title: 'The MVP scope and trust posture were already defined.',
     description:
-      'The handoff clearly locked the audience, value proposition, platform choice, feature boundaries, and non-goals for the MVP.',
+      'The original brief locked the audience, value proposition, moderation boundaries, disclaimer language, and phased build order before implementation began.',
   },
   {
-    title: 'Safety policy was written.',
+    title: 'The app now has a real community product loop.',
     description:
-      'The brief already defines mandatory disclaimers, prohibited positioning, high-risk topic handling, moderation categories, and enforcement priorities.',
+      'Auth, onboarding, feed, search, composer, post detail, comments, reactions, saves, inbox, moderation, and personal activity are all implemented in code.',
   },
   {
-    title: 'The core data model was outlined.',
+    title: 'Security-first foundations are in place.',
     description:
-      'Users, posts, comments, reactions, reports, notifications, blocking, and topic follows are all described well enough to start schema work.',
+      'Encrypted session storage, secure-store helpers, screenshot blocking where supported, biometric relock, row-level security, and RPC-based reads/actions are all part of the current baseline.',
   },
   {
-    title: 'The build order is already mapped.',
+    title: 'The engineering toolchain has been hardened.',
     description:
-      'Auth, onboarding, feeds, composer, reactions, moderation, seeding, analytics, and beta prep were sequenced into clear delivery phases.',
+      'The repo is on Expo 55, the dependency audit is clean, and the main validation commands pass locally.',
   },
 ] as const;
 
 export const currentCodebaseReality = [
   {
-    title: 'The repo started as the stock Expo template.',
+    title: 'This is no longer the Expo starter.',
     description:
-      'Before today there was no SideRoom auth flow, feed, composer, backend client, database schema, or moderation feature implemented in code.',
-    status: 'Starter scaffold',
+      'The repository now contains a real Android-first MVP foundation instead of placeholder demo screens.',
+    status: 'Implemented now',
+    tone: 'success' as const,
+  },
+  {
+    title: 'Missing backend config is handled intentionally.',
+    description:
+      'When real Supabase env values are absent, the app shows a dedicated missing-config screen instead of crashing into broken auth or empty data flows.',
+    status: 'Verified locally',
+    tone: 'success' as const,
+  },
+  {
+    title: 'Launch readiness still depends on live services.',
+    description:
+      'The app shell is healthy, but real auth, real data, moderation validation, and release operations still require a live Supabase project and final release metadata.',
+    status: 'Still blocked',
     tone: 'warning' as const,
-  },
-  {
-    title: 'Today adds a security-first app shell.',
-    description:
-      'The default starter screens were replaced with SideRoom status and security views so future work begins from product context instead of demo code.',
-    status: 'Implemented now',
-    tone: 'success' as const,
-  },
-  {
-    title: 'Today also establishes device-level protections.',
-    description:
-      'The app now checks secure storage availability, blocks screen capture where supported, and relocks behind device authentication when strong biometrics are enrolled.',
-    status: 'Implemented now',
-    tone: 'success' as const,
   },
 ] as const;
 
 export const nextBuildSteps = [
   {
-    title: 'Create the Supabase foundation.',
+    title: 'Connect the live backend.',
     description:
-      'Set up auth providers, database migrations, typed client access, row-level security, moderator roles, and private storage buckets before any real user data is collected.',
+      'Create the Supabase project, add the real env values locally, apply all seven migrations, and verify email plus Google auth end to end.',
   },
   {
-    title: 'Build onboarding and identity flows.',
+    title: 'Pressure-test the real community loop.',
     description:
-      'Implement sign in, topic selection, handle creation, disclaimer acceptance, and the per-post handle versus anonymous publishing controls.',
+      'Use multiple accounts to validate posting, comments, inbox behavior, saved posts, moderation actions, blocking, and thread resolution against live data.',
   },
   {
-    title: 'Ship the main community loop.',
+    title: 'Finish launch metadata and seed content.',
     description:
-      'Build feed ranking, post detail, comments, reactions, saves, search, reporting, topic follows, and seeded launch content.',
+      'Replace placeholder support, policy, and marketing values, create the real seed-authors file, and generate launch content SQL from real seed accounts.',
   },
   {
-    title: 'Finish moderation and compliance.',
+    title: 'Move into preview-build and beta work.',
     description:
-      'Add an admin dashboard, auto-flagging pipeline, crisis escalation flows, audit logs, analytics, retention rules, and release hardening.',
+      'Run release preflight, create preview Android builds, execute the device smoke checklist, and close trust or moderation gaps before broader beta.',
   },
 ] as const;
 
@@ -75,7 +75,7 @@ export const clientSecurityCommitments = [
   {
     title: 'Sensitive local values belong in the device vault.',
     description:
-      'New secure-storage helpers are configured for device-only storage and can require device authentication for especially sensitive values.',
+      'Secure-storage helpers are configured for device-only storage and can require device authentication for especially sensitive values.',
   },
   {
     title: 'The app should visually protect private content.',
@@ -91,9 +91,9 @@ export const clientSecurityCommitments = [
 
 export const backendSecurityRequirements = [
   {
-    title: 'Use row-level security on every user-data table.',
+    title: 'Verify all seven Supabase migrations in a live project.',
     description:
-      'Posts, comments, saves, reports, notifications, and blocked-user rows should default to deny-all, then grant only the minimum actions needed by the current user or moderator role.',
+      'Posts, comments, saves, reports, notifications, blocked-user rows, and moderation flows still need end-to-end validation under the real auth and row-level security rules.',
   },
   {
     title: 'Keep service-role access out of the mobile app.',

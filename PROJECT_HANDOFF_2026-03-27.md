@@ -14,6 +14,8 @@ The most important work completed on 2026-03-27 was not feature work. It was eng
 - a real native Android debug build was created and installed on the emulator
 - the app was smoke-tested in that native Android environment
 - the app launched successfully and rendered the expected missing-backend setup gate instead of crashing
+- the workspace was then cleaned back to the managed / no-local-native-folder state so GitHub and `expo-doctor` stay clean
+- the local repo is now connected to GitHub at `https://github.com/moonlithe1983/sideroom`
 
 The product is still not launch-ready. The biggest remaining blockers are still live Supabase setup and validation, seeded launch content, live Google auth enablement and testing, stronger staff-security controls, and beta / Google Play readiness work.
 
@@ -50,6 +52,8 @@ The product is still not launch-ready. The biggest remaining blockers are still 
 - Normalized the app color-scheme hook so the React Native 0.83 `ColorSchemeName` typing change does not break compilation.
 - Performed a native Android emulator smoke test using `expo run:android`.
 - Generated a local native `android/` folder and a native debug APK as part of that smoke test.
+- Removed the generated local `android/` and `.expo/` folders afterward so the tracked repo stays in a clean managed state.
+- Initialized the local Git repository, connected `origin`, and pushed `main` to GitHub.
 
 ### Security and privacy protections implemented
 
@@ -209,24 +213,29 @@ The 2026-03-27 emulator smoke pass used:
 Important local detail:
 
 - `expo run:android` created a local `android/` folder in this workspace.
-- That folder is currently present locally.
-- The project is now in a "local native folder exists" state for this workspace.
-- `expo-doctor` warns that with native folders present, some `app.json` values are no longer auto-synced by EAS the way a pure no-native-folder CNG flow would be.
+- That folder was intentionally removed after the smoke pass.
+- The workspace is currently back in the managed / no-local-native-folder state.
+- If native local debugging is needed again, rerun `npx expo run:android` and expect Expo to recreate `android/` locally.
 
 Artifacts created by the smoke pass:
 
 - native debug APK:
   - `android/app/build/outputs/apk/debug/app-debug.apk`
 
+That APK path is only available immediately after a local native build. It is not retained in the
+current cleaned workspace.
+
 ### Expo Doctor state on 2026-03-27
 
-`npx expo-doctor` still reports two warnings:
+`npx expo-doctor` now passes cleanly:
 
-1. It claims `.expo` is not ignored by Git.
-   - `.gitignore` already includes `.expo` and `.expo/`.
-   - In this Codex workspace there is also no visible `.git` directory, so treat this warning as suspicious / environment-specific rather than automatically assuming the ignore file is wrong.
-2. It warns that native config fields in `app.json` may not be auto-synced now that local native project folders exist.
-   - This is real and is the important warning to remember if continuing local native work.
+- `17/17` checks passed
+
+Why this changed:
+
+- the workspace now has a real `.git` directory
+- the local `.expo/` cache folder was removed
+- the generated local `android/` folder was removed after the native smoke pass
 
 ## Local Run and Verification Commands
 
@@ -241,6 +250,7 @@ Use these first when resuming:
 - `npx tsc --noEmit`
 - `npm run lint`
 - `npm audit --json`
+- `npx expo-doctor`
 - `npx expo start`
 
 For local native Android debug work in this workspace:
@@ -255,10 +265,15 @@ These commands passed on 2026-03-27:
 - `npx tsc --noEmit`
 - `npm run lint`
 - `npm audit --json`
+- `npx expo-doctor`
 
 `npm audit --json` reported:
 
 - `0` vulnerabilities
+
+`npx expo-doctor` reported:
+
+- `17/17` checks passed
 
 Backend / release preflights still report the expected setup blockers rather than unexpected regressions:
 
@@ -395,7 +410,7 @@ If I were picking this up fresh, I would do the following in order:
    - `docs/security-baseline.md`
    - `docs/supabase-setup.md`
    - `docs/launch-readiness-plan.md`
-2. Confirm whether this local workspace should keep using the generated `android/` folder or whether it should return to a no-native-folder managed workflow.
+2. Assume the workspace should stay in the no-local-native-folder managed workflow unless you intentionally need a fresh native debug build.
 3. Confirm `.env` is populated with the real Supabase URL and publishable key.
 4. Create or inspect the Supabase project and verify all seven migrations are applied in order.
 5. Run:
@@ -425,8 +440,9 @@ For the easiest launch-content setup after the backend is live, use
 - The current Android package is `com.moonlithe.sideroom`; only change it if brand or legal review forces it before Google Play submission.
 - The staff moderation tab is hidden for non-staff users in the tab layout and still guards access in the screen itself.
 - Removed posts are intentionally not openable through the normal post-detail route.
-- The local `android/` folder currently exists because of the 2026-03-27 native smoke test.
-- With `android/` present locally, remember the `expo-doctor` warning about config sync expectations.
+- The repo is now connected to GitHub at `https://github.com/moonlithe1983/sideroom`.
+- The local `android/` folder does **not** currently exist because it was removed after the native smoke test cleanup.
+- If you recreate `android/` with `npx expo run:android`, keep it out of Git and remove it again when you are done if you want the repo to stay in the clean managed state.
 - The native smoke test proved the missing-config gate is working correctly, so the next meaningful smoke test should happen **after** real Supabase env values are provided.
 - If the handoff needs to be refreshed after doc updates, run `npm run handoff:docx` to rebuild the newest dated Word handoff from the newest dated markdown handoff.
 
@@ -452,6 +468,7 @@ The most important changes from the last handoff are:
 - the dependency tree is now locally hardened and audit-clean
 - the Expo / React Native stack is now on the Expo 55 line
 - the app has passed a real native Android emulator smoke boot into the missing-config gate
+- the workspace has been cleaned back to the managed / GitHub-friendly state and `expo-doctor` now passes cleanly
 - the live backend is still not connected
 
 The next person should start with live Supabase setup and end-to-end validation, not by redesigning the product or rebuilding the current app structure.
