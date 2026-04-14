@@ -7,6 +7,7 @@ import { PostCard } from '@/components/community/post-card';
 import { PrimaryButton } from '@/components/primary-button';
 import { SectionCard } from '@/components/section-card';
 import { SelectableChip } from '@/components/selectable-chip';
+import { StateMessage } from '@/components/state-message';
 import { StatusPill } from '@/components/status-pill';
 import { ThemedText } from '@/components/themed-text';
 import { getFeedPosts } from '@/lib/community/api';
@@ -19,7 +20,6 @@ export default function HomeScreen() {
   const background = useThemeColor({}, 'background');
   const accentSoft = useThemeColor({}, 'accentSoft');
   const border = useThemeColor({}, 'border');
-  const danger = useThemeColor({}, 'danger');
   const muted = useThemeColor({}, 'muted');
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
   const [posts, setPosts] = useState<CommunityFeedPost[]>([]);
@@ -80,15 +80,30 @@ export default function HomeScreen() {
 
       <SectionCard eyebrow="Live Feed" title="Recent questions and discussions">
         {loading ? (
-          <ThemedText style={{ color: muted }}>Loading the latest SideRoom posts...</ThemedText>
+          <StateMessage
+            message="SideRoom is loading the latest questions for this topic filter."
+            title="Loading feed"
+          />
         ) : null}
         {error ? (
-          <ThemedText style={{ color: danger }}>{error}</ThemedText>
+          <StateMessage
+            actionHint="Tries loading the home feed again."
+            actionLabel="Try again"
+            message={error}
+            onAction={() => void loadFeed()}
+            title="Feed could not load"
+            tone="danger"
+          />
         ) : null}
         {!loading && !error && posts.length === 0 ? (
-          <ThemedText style={{ color: muted }}>
-            No posts are available yet. Seed the database or write the first post from the Ask tab.
-          </ThemedText>
+          <StateMessage
+            actionHint="Opens the Ask tab so you can create the first post."
+            actionLabel="Write the first post"
+            message="No posts are available yet. Seed launch content or create the first question from the Ask tab."
+            onAction={() => router.push('/create')}
+            title="Nothing is showing in this feed yet"
+            tone="warning"
+          />
         ) : null}
         {posts.map((post) => (
           <PostCard

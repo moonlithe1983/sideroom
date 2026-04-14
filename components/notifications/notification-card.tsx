@@ -24,6 +24,8 @@ export function NotificationCard({
 
   return (
     <Pressable
+      accessibilityHint="Opens the related post."
+      accessibilityLabel={`${notification.message_title}. ${notification.is_read ? 'Read' : 'Unread'}. ${notification.post_title ? `Related post ${notification.post_title}.` : ''}`}
       accessibilityRole="button"
       disabled={disabled}
       onPress={onPress}
@@ -74,12 +76,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   metaText: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
   },
   postTitle: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
   },
   preview: {
     fontSize: 15,

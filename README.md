@@ -6,7 +6,7 @@ SideRoom is an Android-first Expo / React Native app for moderated peer discussi
 
 - The app is well beyond the Expo starter template.
 - Core flows are implemented: auth shell, onboarding, home feed, search, composer, post detail, comments, saves, reactions, inbox, personal activity, reporting, blocking, moderation, trust surfaces, and policy/support screens.
-- Security foundations are implemented: encrypted session persistence, secure storage helpers, screenshot blocking where supported, biometric relock, Supabase RLS-first backend design, and protected RPC-based data access.
+- Security and trust foundations are implemented: encrypted session persistence, secure storage helpers, screenshot blocking where supported, biometric relock, Supabase RLS-first backend design, protected RPC-based data access, and a universal-design baseline for core screens.
 - The repo is GitHub-ready and locally healthy:
   - `npm run typecheck` passes
   - `npm run lint` passes
@@ -26,6 +26,7 @@ SideRoom is an Android-first Expo / React Native app for moderated peer discussi
 - Inbox for replies and positive reactions
 - Me tab for saved posts and authored posts
 - In-app self-serve account deletion for non-staff accounts
+- Public account-deletion request path placeholder surfaced through Policies and Support
 - Author controls for `open` / `resolved` thread status
 - Staff-only moderation queue with dismiss, remove, lock, suspend, and ban actions
 - Trust Center plus Policies and Support screens
@@ -37,8 +38,9 @@ SideRoom is an Android-first Expo / React Native app for moderated peer discussi
   - `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 - Live Supabase setup is still unverified.
 - Google provider enablement still needs to be completed in Supabase.
-- `config/release-metadata.json` still contains placeholder support, privacy-policy, terms, and marketing values.
+- `config/release-metadata.json` still contains placeholder support, privacy-policy, terms, account-deletion, and marketing values.
 - `supabase/bootstrap/seed-authors.json` still does not exist, so launch seed SQL remains template-only.
+- Accessibility pass evidence and real-device smoke evidence are still pending human completion.
 
 ## Quick Start
 
@@ -88,8 +90,10 @@ Without real backend env values, the app should boot into the missing-config scr
 
 ## Key Docs
 
-- `PROJECT_HANDOFF_2026-03-27.md`
+- `PROJECT_HANDOFF_2026-04-14.md`
 - `docs/project-status.md`
+- `docs/accessibility-and-launch-gap-audit.md`
+- `docs/universal-design-baseline.md`
 - `docs/security-baseline.md`
 - `docs/supabase-setup.md`
 - `docs/launch-readiness-plan.md`

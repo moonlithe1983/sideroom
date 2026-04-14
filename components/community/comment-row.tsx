@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { StatusPill } from '@/components/status-pill';
@@ -13,6 +14,52 @@ type CommentRowProps = {
   onReport?: () => void;
   selectedForSafety?: boolean;
 };
+
+type ActionButtonProps = {
+  accessibilityHint: string;
+  accessibilityLabel: string;
+  borderColor: string;
+  disabled?: boolean;
+  label: string;
+  onPress: () => void;
+  textColor: string;
+};
+
+function ActionButton({
+  accessibilityHint,
+  accessibilityLabel,
+  borderColor,
+  disabled = false,
+  label,
+  onPress,
+  textColor,
+}: ActionButtonProps) {
+  const focusRing = useThemeColor({}, 'focusRing');
+  const [isFocused, setIsFocused] = useState(false);
+
+  return (
+    <Pressable
+      accessibilityHint={accessibilityHint}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="button"
+      disabled={disabled}
+      onBlur={() => setIsFocused(false)}
+      onFocus={() => setIsFocused(true)}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.actionButton,
+        {
+          borderColor: isFocused ? focusRing : borderColor,
+          borderWidth: isFocused ? 2 : 1,
+          opacity: disabled ? 0.45 : pressed ? 0.78 : 1,
+        },
+      ]}>
+      <ThemedText type="defaultSemiBold" style={[styles.actionText, { color: textColor }]}>
+        {label}
+      </ThemedText>
+    </Pressable>
+  );
+}
 
 export function CommentRow({
   comment,
@@ -40,38 +87,26 @@ export function CommentRow({
       {onReport || onBlockAuthor ? (
         <View style={styles.actionRow}>
           {onReport ? (
-            <Pressable
-              accessibilityRole="button"
+            <ActionButton
+              accessibilityHint="Sends this comment to the moderation queue and removes it from your view."
+              accessibilityLabel={`Report comment from ${comment.author_label}`}
+              borderColor={tint}
               disabled={disabled}
+              label="Report"
               onPress={onReport}
-              style={({ pressed }) => [
-                styles.actionButton,
-                {
-                  borderColor: tint,
-                  opacity: disabled ? 0.45 : pressed ? 0.78 : 1,
-                },
-              ]}>
-              <ThemedText type="defaultSemiBold" style={[styles.actionText, { color: tint }]}>
-                Report
-              </ThemedText>
-            </Pressable>
+              textColor={tint}
+            />
           ) : null}
           {onBlockAuthor ? (
-            <Pressable
-              accessibilityRole="button"
+            <ActionButton
+              accessibilityHint="Hides this author from your feed, search, comments, and notifications."
+              accessibilityLabel={`Block author ${comment.author_label}`}
+              borderColor={danger}
               disabled={disabled}
+              label="Block author"
               onPress={onBlockAuthor}
-              style={({ pressed }) => [
-                styles.actionButton,
-                {
-                  borderColor: danger,
-                  opacity: disabled ? 0.45 : pressed ? 0.78 : 1,
-                },
-              ]}>
-              <ThemedText type="defaultSemiBold" style={[styles.actionText, { color: danger }]}>
-                Block author
-              </ThemedText>
-            </Pressable>
+              textColor={danger}
+            />
           ) : null}
         </View>
       ) : null}
@@ -92,8 +127,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   actionText: {
-    fontSize: 13,
-    lineHeight: 16,
+    fontSize: 14,
+    lineHeight: 18,
   },
   card: {
     borderRadius: 22,
@@ -108,7 +143,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   metaText: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
   },
 });

@@ -27,6 +27,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
+          tabBarAccessibilityLabel: 'Home tab',
           tabBarIcon: ({ color }) => <IconSymbol size={24} name="house.fill" color={color} />,
         }}
       />
@@ -34,6 +35,7 @@ export default function TabLayout() {
         name="search"
         options={{
           title: 'Search',
+          tabBarAccessibilityLabel: 'Search tab',
           tabBarIcon: ({ color }) => <IconSymbol size={24} name="magnifyingglass" color={color} />,
         }}
       />
@@ -41,6 +43,7 @@ export default function TabLayout() {
         name="create"
         options={{
           title: 'Ask',
+          tabBarAccessibilityLabel: 'Ask tab',
           tabBarIcon: ({ color }) => <IconSymbol size={24} name="square.and.pencil" color={color} />,
         }}
       />
@@ -48,6 +51,7 @@ export default function TabLayout() {
         name="inbox"
         options={{
           title: 'Inbox',
+          tabBarAccessibilityLabel: 'Inbox tab',
           tabBarIcon: ({ color }) => <IconSymbol size={24} name="bell.fill" color={color} />,
         }}
       />
@@ -56,6 +60,7 @@ export default function TabLayout() {
         options={{
           href: auth.isStaff ? undefined : null,
           title: 'Mod',
+          tabBarAccessibilityLabel: 'Moderation tab',
           tabBarIcon: ({ color }) => <IconSymbol size={24} name="lock.shield.fill" color={color} />,
         }}
       />
@@ -63,6 +68,7 @@ export default function TabLayout() {
         name="explore"
         options={{
           title: 'Me',
+          tabBarAccessibilityLabel: 'Me tab',
           tabBarIcon: ({ color }) => <IconSymbol size={24} name="person.crop.circle.fill" color={color} />,
         }}
       />

@@ -11,7 +11,7 @@ type StatusPillProps = {
 export function StatusPill({ label, tone }: StatusPillProps) {
   const tint = useThemeColor({}, 'tint');
   const success = useThemeColor({}, 'success');
-  const warning = useThemeColor({}, 'danger');
+  const warning = useThemeColor({}, 'warning');
   const surfaceAlt = useThemeColor({}, 'surfaceAlt');
 
   const color = tone === 'success' ? success : tone === 'warning' ? warning : tint;
@@ -30,11 +30,13 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     borderRadius: 999,
     borderWidth: 1,
+    minHeight: 30,
+    justifyContent: 'center',
     paddingHorizontal: 12,
     paddingVertical: 7,
   },
   label: {
-    fontSize: 12,
-    lineHeight: 16,
+    fontSize: 13,
+    lineHeight: 18,
   },
 });

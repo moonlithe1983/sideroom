@@ -1,12 +1,15 @@
 import * as Linking from 'expo-linking';
+import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { SectionCard } from '@/components/section-card';
 import { StatusPill } from '@/components/status-pill';
 import { ThemedText } from '@/components/themed-text';
 import {
+  accountDeletionRequestUrl,
   googlePlayFullDescription,
   googlePlayShortDescription,
+  hasPlaceholderAccountDeletionRequestUrl,
   hasPlaceholderMarketingUrl,
   hasPlaceholderPrivacyPolicyUrl,
   hasPlaceholderSupportEmail,
@@ -30,13 +33,22 @@ type LinkCardProps = {
 };
 
 function LinkCard({ description, label, muted, url }: LinkCardProps) {
+  const focusRing = useThemeColor({}, 'focusRing');
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <Pressable
+      accessibilityHint={`Opens ${label.toLowerCase()}.`}
+      accessibilityLabel={label}
       accessibilityRole="button"
+      onBlur={() => setIsFocused(false)}
+      onFocus={() => setIsFocused(true)}
       onPress={() => void Linking.openURL(url)}
       style={({ pressed }) => [
         styles.linkCard,
         {
+          borderColor: isFocused ? focusRing : 'transparent',
+          borderWidth: isFocused ? 2 : 0,
           opacity: pressed ? 0.82 : 1,
         },
       ]}>
@@ -63,6 +75,14 @@ export default function PoliciesScreen() {
         <StatusPill
           label={releaseMetadataStatus.supportContactReady ? 'Support contact ready' : 'Support contact pending'}
           tone={releaseMetadataStatus.supportContactReady ? 'success' : 'warning'}
+        />
+        <StatusPill
+          label={
+            releaseMetadataStatus.accountDeletionReady
+              ? 'Deletion request page ready'
+              : 'Deletion request page pending'
+          }
+          tone={releaseMetadataStatus.accountDeletionReady ? 'success' : 'warning'}
         />
         <StatusPill
           label={releaseMetadataStatus.playListingCopyReady ? 'Play copy drafted' : 'Play copy missing'}
@@ -123,6 +143,16 @@ export default function PoliciesScreen() {
         />
         <LinkCard
           description={
+            hasPlaceholderAccountDeletionRequestUrl
+              ? 'This placeholder deletion-request page must be replaced before beta or store review.'
+              : 'Open the public account deletion request page for users who cannot use the in-app path.'
+          }
+          label="Account deletion request page"
+          muted={muted}
+          url={accountDeletionRequestUrl}
+        />
+        <LinkCard
+          description={
             hasPlaceholderMarketingUrl
               ? 'This placeholder marketing URL should be replaced with the live landing page.'
               : 'Open the public landing or marketing page.'
@@ -164,8 +194,8 @@ export default function PoliciesScreen() {
           stay support-managed so moderation audit trails are not removed casually.
         </ThemedText>
         <ThemedText style={[styles.body, { color: muted }]}>
-          Before store submission, the public support and privacy pages should explain the same
-          behavior using the final live support contact.
+          Before store submission, the public support, privacy, and account-deletion pages should
+          explain the same behavior using the final live support contact.
         </ThemedText>
       </SectionCard>
     </ScrollView>
@@ -193,6 +223,8 @@ const styles = StyleSheet.create({
     lineHeight: 38,
   },
   linkCard: {
+    borderRadius: 16,
     gap: 8,
+    padding: 2,
   },
 });

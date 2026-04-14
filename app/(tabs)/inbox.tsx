@@ -6,6 +6,7 @@ import { NotificationCard } from '@/components/notifications/notification-card';
 import { PrimaryButton } from '@/components/primary-button';
 import { SectionCard } from '@/components/section-card';
 import { SelectableChip } from '@/components/selectable-chip';
+import { StateMessage } from '@/components/state-message';
 import { StatusPill } from '@/components/status-pill';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -22,7 +23,6 @@ export default function InboxScreen() {
   const background = useThemeColor({}, 'background');
   const accentSoft = useThemeColor({}, 'accentSoft');
   const border = useThemeColor({}, 'border');
-  const danger = useThemeColor({}, 'danger');
   const muted = useThemeColor({}, 'muted');
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -126,6 +126,8 @@ export default function InboxScreen() {
           <SelectableChip label="Unread only" onPress={() => setUnreadOnly(true)} selected={unreadOnly} />
         </View>
         <PrimaryButton
+          accessibilityHint="Marks every inbox item as read."
+          busy={bulkWorking}
           disabled={bulkWorking || unreadCount === 0}
           label={bulkWorking ? 'Marking...' : 'Mark all as read'}
           onPress={() => void handleMarkAllRead()}
@@ -134,14 +136,31 @@ export default function InboxScreen() {
       </SectionCard>
 
       <SectionCard eyebrow="Inbox" title="Recent activity on your content">
-        {loading ? <ThemedText style={{ color: muted }}>Loading your latest activity...</ThemedText> : null}
-        {error ? <ThemedText style={{ color: danger }}>{error}</ThemedText> : null}
+        {loading ? (
+          <StateMessage
+            message="SideRoom is loading the latest replies and reactions tied to your content."
+            title="Loading inbox"
+          />
+        ) : null}
+        {error ? (
+          <StateMessage
+            actionHint="Loads the inbox again."
+            actionLabel="Try again"
+            message={error}
+            onAction={() => void loadInbox()}
+            title="Inbox could not load"
+            tone="danger"
+          />
+        ) : null}
         {!loading && !error && notifications.length === 0 ? (
-          <ThemedText style={{ color: muted }}>
-            {unreadOnly
-              ? 'No unread activity right now. New replies and reactions will show up here.'
-              : 'Your inbox is empty for now. Once people reply to your posts, activity will appear here.'}
-          </ThemedText>
+          <StateMessage
+            message={
+              unreadOnly
+                ? 'No unread activity right now. New replies and reactions will show up here.'
+                : 'Your inbox is empty for now. Once people reply to your posts, activity will appear here.'
+            }
+            title={unreadOnly ? 'Nothing unread right now' : 'No activity yet'}
+          />
         ) : null}
         {notifications.map((notification) => (
           <NotificationCard

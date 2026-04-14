@@ -13,6 +13,7 @@ function emailUsesPlaceholderDomain(value: string) {
 
 export const supportEmail = releaseMetadata.supportEmail;
 export const supportUrl = releaseMetadata.supportUrl;
+export const accountDeletionRequestUrl = releaseMetadata.accountDeletionRequestUrl;
 export const privacyPolicyUrl = releaseMetadata.privacyPolicyUrl;
 export const termsUrl = releaseMetadata.termsUrl;
 export const marketingUrl = releaseMetadata.marketingUrl;
@@ -21,6 +22,9 @@ export const googlePlayFullDescription = releaseMetadata.googlePlayFullDescripti
 
 export const hasPlaceholderSupportEmail = emailUsesPlaceholderDomain(supportEmail);
 export const hasPlaceholderSupportUrl = urlUsesPlaceholderDomain(supportUrl);
+export const hasPlaceholderAccountDeletionRequestUrl = urlUsesPlaceholderDomain(
+  accountDeletionRequestUrl
+);
 export const hasPlaceholderPrivacyPolicyUrl = urlUsesPlaceholderDomain(privacyPolicyUrl);
 export const hasPlaceholderTermsUrl = urlUsesPlaceholderDomain(termsUrl);
 export const hasPlaceholderMarketingUrl = urlUsesPlaceholderDomain(marketingUrl);
@@ -28,6 +32,9 @@ export const hasPlaceholderMarketingUrl = urlUsesPlaceholderDomain(marketingUrl)
 export const missingReleaseMetadataItems = [
   hasPlaceholderSupportEmail ? 'Replace the placeholder support email.' : null,
   hasPlaceholderSupportUrl ? 'Replace the placeholder support URL.' : null,
+  hasPlaceholderAccountDeletionRequestUrl
+    ? 'Replace the placeholder account deletion request URL.'
+    : null,
   hasPlaceholderPrivacyPolicyUrl ? 'Replace the placeholder privacy policy URL.' : null,
   hasPlaceholderTermsUrl ? 'Replace the placeholder terms URL.' : null,
   hasPlaceholderMarketingUrl ? 'Replace the placeholder marketing URL.' : null,
@@ -35,8 +42,12 @@ export const missingReleaseMetadataItems = [
 
 export const releaseMetadataStatus = {
   policyLinksReady:
-    !hasPlaceholderPrivacyPolicyUrl && !hasPlaceholderTermsUrl && !hasPlaceholderSupportUrl,
+    !hasPlaceholderPrivacyPolicyUrl &&
+    !hasPlaceholderTermsUrl &&
+    !hasPlaceholderSupportUrl &&
+    !hasPlaceholderAccountDeletionRequestUrl,
   playListingCopyReady:
     googlePlayShortDescription.trim().length > 0 && googlePlayFullDescription.trim().length > 0,
+  accountDeletionReady: !hasPlaceholderAccountDeletionRequestUrl,
   supportContactReady: !hasPlaceholderSupportEmail && !hasPlaceholderSupportUrl,
 };

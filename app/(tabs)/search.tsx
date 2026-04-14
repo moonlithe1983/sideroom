@@ -4,9 +4,11 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { useAppAuth } from '@/components/auth/auth-provider';
 import { PostCard } from '@/components/community/post-card';
+import { FormField } from '@/components/form-field';
 import { PrimaryButton } from '@/components/primary-button';
 import { SectionCard } from '@/components/section-card';
 import { SelectableChip } from '@/components/selectable-chip';
+import { StateMessage } from '@/components/state-message';
 import { StatusPill } from '@/components/status-pill';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedTextInput } from '@/components/themed-text-input';
@@ -20,7 +22,6 @@ export default function SearchScreen() {
   const background = useThemeColor({}, 'background');
   const accentSoft = useThemeColor({}, 'accentSoft');
   const border = useThemeColor({}, 'border');
-  const danger = useThemeColor({}, 'danger');
   const muted = useThemeColor({}, 'muted');
   const [query, setQuery] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState('');
@@ -89,7 +90,9 @@ export default function SearchScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={[styles.content, { backgroundColor: background }]}>
+    <ScrollView
+      contentContainerStyle={[styles.content, { backgroundColor: background }]}
+      keyboardShouldPersistTaps="handled">
       <View style={[styles.hero, { backgroundColor: accentSoft, borderColor: border }]}>
         <StatusPill label="Search" tone="success" />
         <ThemedText type="title" style={styles.heroTitle}>
@@ -102,17 +105,26 @@ export default function SearchScreen() {
       </View>
 
       <SectionCard eyebrow="Query" title="Search titles, body text, and topics">
-        <ThemedTextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          onChangeText={setQuery}
-          onSubmitEditing={handleSearch}
-          placeholder="Try moving abroad, career pivot, family tension..."
-          returnKeyType="search"
-          value={query}
-        />
+        <FormField
+          helperText="Use a situation, keyword, or topic. Search works best with 2 or more characters."
+          label="Search query"
+          required>
+          <ThemedTextInput
+            accessibilityHint="Searches SideRoom posts by title, body text, and topic."
+            accessibilityLabel="Search query"
+            autoCapitalize="none"
+            autoCorrect={false}
+            onChangeText={setQuery}
+            onSubmitEditing={handleSearch}
+            placeholder="Try moving abroad, career pivot, family tension..."
+            returnKeyType="search"
+            value={query}
+          />
+        </FormField>
         <View style={styles.buttonRow}>
           <PrimaryButton
+            accessibilityHint="Runs the search using the query above and the selected topic filter."
+            busy={loading}
             disabled={loading}
             label={loading ? 'Searching...' : 'Search'}
             onPress={handleSearch}
@@ -164,10 +176,17 @@ export default function SearchScreen() {
           </>
         ) : null}
         {loading ? (
-          <ThemedText style={{ color: muted }}>Searching the latest SideRoom posts...</ThemedText>
+          <StateMessage
+            message="Searching SideRoom posts that match your words and topic filter."
+            title="Searching"
+          />
         ) : null}
         {error ? (
-          <ThemedText style={{ color: danger }}>{error}</ThemedText>
+          <StateMessage
+            message={error}
+            title="Search needs a clearer query"
+            tone="danger"
+          />
         ) : null}
         {hasSearched && !loading && !error ? (
           <StatusPill
@@ -176,10 +195,11 @@ export default function SearchScreen() {
           />
         ) : null}
         {hasSearched && !loading && !error && results.length === 0 ? (
-          <ThemedText style={{ color: muted }}>
-            No matches yet. Try a broader phrase, switch topics, or seed more launch content in the
-            database.
-          </ThemedText>
+          <StateMessage
+            message="No matches yet. Try a broader phrase, remove the topic filter, or seed more launch content."
+            title="No posts matched this search"
+            tone="warning"
+          />
         ) : null}
         {results.map((post) => (
           <PostCard

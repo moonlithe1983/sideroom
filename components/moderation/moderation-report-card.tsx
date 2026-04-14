@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { StatusPill } from '@/components/status-pill';
@@ -23,19 +24,25 @@ type ActionButtonProps = {
 function ActionButton({ danger = false, disabled = false, label, onPress }: ActionButtonProps) {
   const border = useThemeColor({}, 'border');
   const dangerColor = useThemeColor({}, 'danger');
+  const focusRing = useThemeColor({}, 'focusRing');
   const surfaceAlt = useThemeColor({}, 'surfaceAlt');
   const tint = useThemeColor({}, 'tint');
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
     <Pressable
+      accessibilityLabel={label}
       accessibilityRole="button"
       disabled={disabled}
+      onBlur={() => setIsFocused(false)}
+      onFocus={() => setIsFocused(true)}
       onPress={onPress}
       style={({ pressed }) => [
         styles.actionButton,
         {
           backgroundColor: surfaceAlt,
-          borderColor: danger ? dangerColor : border,
+          borderColor: isFocused ? focusRing : danger ? dangerColor : border,
+          borderWidth: isFocused ? 2 : 1,
           opacity: disabled ? 0.45 : pressed ? 0.8 : 1,
         },
       ]}>
@@ -159,8 +166,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   actionLabel: {
-    fontSize: 13,
-    lineHeight: 16,
+    fontSize: 14,
+    lineHeight: 18,
   },
   actionRow: {
     flexDirection: 'row',
@@ -184,8 +191,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   metaText: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
   },
   pillRow: {
     flexDirection: 'row',

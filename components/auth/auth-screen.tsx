@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { useAppAuth } from '@/components/auth/auth-provider';
+import { FormField } from '@/components/form-field';
 import { PrimaryButton } from '@/components/primary-button';
 import { SectionCard } from '@/components/section-card';
+import { StateMessage } from '@/components/state-message';
 import { StatusPill } from '@/components/status-pill';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedTextInput } from '@/components/themed-text-input';
@@ -15,7 +17,6 @@ export function AuthScreen() {
   const background = useThemeColor({}, 'background');
   const accentSoft = useThemeColor({}, 'accentSoft');
   const border = useThemeColor({}, 'border');
-  const danger = useThemeColor({}, 'danger');
   const muted = useThemeColor({}, 'muted');
   const [email, setEmail] = useState(auth.lastMagicLinkEmail ?? '');
   const [pendingMethod, setPendingMethod] = useState<'google' | 'magic-link' | null>(null);
@@ -39,7 +40,9 @@ export function AuthScreen() {
   }
 
   return (
-    <ScrollView contentContainerStyle={[styles.content, { backgroundColor: background }]}>
+    <ScrollView
+      contentContainerStyle={[styles.content, { backgroundColor: background }]}
+      keyboardShouldPersistTaps="handled">
       <View style={[styles.hero, { backgroundColor: accentSoft, borderColor: border }]}>
         <StatusPill label="Private beta sign-in" tone="success" />
         <ThemedText type="title" style={styles.heroTitle}>
@@ -58,6 +61,8 @@ export function AuthScreen() {
         </ThemedText>
         <View style={styles.actions}>
           <PrimaryButton
+            accessibilityHint="Starts Google sign-in and returns you to SideRoom."
+            busy={pendingMethod === 'google'}
             disabled={pendingMethod !== null}
             label={pendingMethod === 'google' ? 'Connecting to Google...' : 'Continue with Google'}
             onPress={() => void handleProviderSubmit('google')}
@@ -75,27 +80,44 @@ export function AuthScreen() {
           Use the email address tied to your account. Opening the link will route back into the app
           and finish sign-in through Supabase.
         </ThemedText>
-        <ThemedTextInput
-          autoCapitalize="none"
-          autoComplete="email"
-          autoCorrect={false}
-          keyboardType="email-address"
-          onChangeText={setEmail}
-          placeholder="you@example.com"
-          value={email}
-        />
+        <FormField
+          helperText="Use the email address you want SideRoom to send the one-time sign-in link to."
+          label="Email address"
+          required>
+          <ThemedTextInput
+            accessibilityHint="Enter the email address for your SideRoom account."
+            accessibilityLabel="Email address"
+            autoCapitalize="none"
+            autoComplete="email"
+            autoCorrect={false}
+            keyboardType="email-address"
+            onChangeText={setEmail}
+            placeholder="you@example.com"
+            returnKeyType="send"
+            value={email}
+          />
+        </FormField>
         <PrimaryButton
+          accessibilityHint="Sends a one-time sign-in link to the email address above."
+          busy={pendingMethod === 'magic-link'}
           disabled={pendingMethod !== null || email.trim().length === 0}
           label={
             pendingMethod === 'magic-link' ? 'Sending secure link...' : 'Send secure sign-in link'
           }
           onPress={() => void handleMagicLinkSubmit()}
         />
-        {auth.notice ? (
-          <ThemedText style={[styles.message, { color: muted }]}>{auth.notice}</ThemedText>
+        {email.trim().length === 0 ? (
+          <ThemedText style={[styles.helper, { color: muted }]}>
+            Add your email first so the sign-in button makes sense.
+          </ThemedText>
         ) : null}
+        {auth.notice ? <StateMessage message={auth.notice} title="What happened" tone="success" /> : null}
         {auth.authError ? (
-          <ThemedText style={[styles.message, { color: danger }]}>{auth.authError}</ThemedText>
+          <StateMessage
+            message={auth.authError}
+            title="Sign-in could not finish"
+            tone="danger"
+          />
         ) : null}
       </SectionCard>
 
@@ -132,10 +154,6 @@ const styles = StyleSheet.create({
   heroBody: {
     fontSize: 16,
     lineHeight: 24,
-  },
-  message: {
-    fontSize: 14,
-    lineHeight: 21,
   },
   helper: {
     fontSize: 13,

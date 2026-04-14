@@ -10,13 +10,21 @@ const requiredEnvVariables = [
   'EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY',
 ];
 const requiredDocs = [
+  'docs/accessibility-and-launch-gap-audit.md',
+  'docs/accessibility-test-checklist.md',
+  'docs/accessibility-test-pass.md',
+  'docs/account-deletion-flow.md',
+  'docs/closed-beta-readiness.md',
   'docs/device-smoke-checklist.md',
   'docs/google-play-submission-checklist.md',
   'docs/launch-readiness-plan.md',
   'docs/launch-seed-content.md',
+  'docs/moderation-drills.md',
   'docs/preview-build-runbook.md',
+  'docs/real-device-smoke-pass.md',
   'docs/release-preflight.md',
   'docs/supabase-setup.md',
+  'docs/universal-design-baseline.md',
 ];
 const requiredBootstrapArtifacts = [
   'supabase/bootstrap/full-setup.sql',
@@ -317,6 +325,7 @@ function validateReleaseMetadata() {
 
   const supportEmail = String(releaseMetadata.supportEmail ?? '').trim();
   const supportUrl = String(releaseMetadata.supportUrl ?? '').trim();
+  const accountDeletionRequestUrl = String(releaseMetadata.accountDeletionRequestUrl ?? '').trim();
   const privacyPolicyUrl = String(releaseMetadata.privacyPolicyUrl ?? '').trim();
   const termsUrl = String(releaseMetadata.termsUrl ?? '').trim();
   const marketingUrl = String(releaseMetadata.marketingUrl ?? '').trim();
@@ -337,6 +346,17 @@ function validateReleaseMetadata() {
     issues.push('Support URL in config/release-metadata.json is still missing or placeholder.');
   } else {
     passes.push('Support URL looks configured.');
+  }
+
+  if (
+    !/^https?:\/\/.+/i.test(accountDeletionRequestUrl) ||
+    isPlaceholderUrl(accountDeletionRequestUrl)
+  ) {
+    issues.push(
+      'Account deletion request URL in config/release-metadata.json is still missing or placeholder.'
+    );
+  } else {
+    passes.push('Account deletion request URL looks configured.');
   }
 
   if (!/^https?:\/\/.+/i.test(privacyPolicyUrl) || isPlaceholderUrl(privacyPolicyUrl)) {
@@ -398,6 +418,37 @@ function validateOptionalLaunchArtifacts() {
   return warnings;
 }
 
+function validateManualEvidenceDocs() {
+  const warnings = [];
+
+  const trackedDocs = [
+    {
+      path: 'docs/accessibility-test-pass.md',
+      warning:
+        'Accessibility test pass is not marked complete yet. Finish TalkBack and keyboard traversal checks before beta.',
+    },
+    {
+      path: 'docs/real-device-smoke-pass.md',
+      warning:
+        'Real-device smoke pass is not marked complete yet. Finish preview-build device testing before wider beta.',
+    },
+  ];
+
+  for (const trackedDoc of trackedDocs) {
+    if (!fileExists(trackedDoc.path)) {
+      continue;
+    }
+
+    const contents = fs.readFileSync(path.join(projectRoot, trackedDoc.path), 'utf8');
+
+    if (!/^Status:\s*complete\s*$/im.test(contents)) {
+      warnings.push(trackedDoc.warning);
+    }
+  }
+
+  return warnings;
+}
+
 function printSection(title) {
   console.log(`\n${cyan(title)}`);
 }
@@ -428,6 +479,7 @@ function main() {
   const assetValidation = validateFiles(requiredAssets, 'Required icon, splash, and favicon assets are present.');
   const releaseMetadataValidation = validateReleaseMetadata();
   const launchWarnings = validateOptionalLaunchArtifacts();
+  const manualEvidenceWarnings = validateManualEvidenceDocs();
 
   printSection('Environment');
   if (envSources.foundFiles.length === 0) {
@@ -459,6 +511,7 @@ function main() {
   printList(releaseMetadataValidation.issues, red);
   printList(releaseMetadataValidation.warnings, yellow);
   printList(launchWarnings, yellow);
+  printList(manualEvidenceWarnings, yellow);
 
   printSection('Manual Launch Gates');
   console.log(`  ${yellow('-')} Closed beta, crash-rate review, and real moderation drills still need human validation.`);
@@ -478,7 +531,7 @@ function main() {
 
   printSection('Next Tiny Steps');
   console.log('  1. Add the real Supabase URL and publishable key locally.');
-  console.log('  2. Replace the placeholder policy, terms, support, and marketing values in config/release-metadata.json.');
+  console.log('  2. Replace the placeholder policy, terms, support, account-deletion, and marketing values in config/release-metadata.json.');
   console.log('  3. Keep the current Android package name unless brand or legal review requires a change.');
   console.log('  4. Keep eas.json build profiles in sync with the release process.');
   console.log('  5. Generate the real launch-content SQL after seed accounts exist.');
