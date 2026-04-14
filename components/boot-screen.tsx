@@ -29,7 +29,12 @@ export function BootScreen({
           {title}
         </ThemedText>
         <ThemedText style={[styles.body, { color: muted }]}>{body}</ThemedText>
-        <ActivityIndicator color={tint} size="large" style={styles.spinner} />
+        <ActivityIndicator
+          accessibilityLabel="Loading SideRoom"
+          color={tint}
+          size="large"
+          style={styles.spinner}
+        />
       </View>
     </View>
   );

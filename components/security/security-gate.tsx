@@ -42,9 +42,19 @@ export function SecurityGate({ loading = false }: SecurityGateProps) {
         </View>
 
         {loading ? (
-          <ActivityIndicator color={tint} size="large" style={styles.spinner} />
+          <ActivityIndicator
+            accessibilityLabel="Checking device protections"
+            color={tint}
+            size="large"
+            style={styles.spinner}
+          />
         ) : (
-          <Pressable style={[styles.button, { backgroundColor: tint }]} onPress={() => void security.unlockApp()}>
+          <Pressable
+            accessibilityHint="Uses the device's secure unlock method before SideRoom content becomes visible."
+            accessibilityLabel="Unlock with device security"
+            accessibilityRole="button"
+            style={[styles.button, { backgroundColor: tint }]}
+            onPress={() => void security.unlockApp()}>
             <ThemedText type="defaultSemiBold" style={styles.buttonLabel}>
               Unlock with device security
             </ThemedText>

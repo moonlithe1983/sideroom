@@ -2,9 +2,11 @@ import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { useAppAuth } from '@/components/auth/auth-provider';
+import { FormField } from '@/components/form-field';
 import { PrimaryButton } from '@/components/primary-button';
 import { SectionCard } from '@/components/section-card';
 import { SelectableChip } from '@/components/selectable-chip';
+import { StateMessage } from '@/components/state-message';
 import { StatusPill } from '@/components/status-pill';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedTextInput } from '@/components/themed-text-input';
@@ -63,7 +65,9 @@ export function OnboardingScreen() {
     auth.topics.length > 0;
 
   return (
-    <ScrollView contentContainerStyle={[styles.content, { backgroundColor: background }]}>
+    <ScrollView
+      contentContainerStyle={[styles.content, { backgroundColor: background }]}
+      keyboardShouldPersistTaps="handled">
       <View style={[styles.hero, { backgroundColor: accentSoft, borderColor: border }]}>
         <StatusPill label="Complete secure setup" tone="success" />
         <ThemedText type="title" style={styles.heroTitle}>
@@ -80,21 +84,26 @@ export function OnboardingScreen() {
           This handle is public. Anonymous posts stay traceable to moderators, but not to the
           public feed.
         </ThemedText>
-        <ThemedTextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          maxLength={24}
-          onChangeText={setHandle}
-          placeholder="sideroom_friend"
-          value={handle}
-        />
-        <ThemedText
-          style={[
-            styles.helper,
-            { color: /^[a-z0-9_]{3,24}$/.test(handle.trim().toLowerCase()) ? muted : danger },
-          ]}>
-          {handleValidityMessage}
-        </ThemedText>
+        <FormField
+          errorText={
+            handle.trim().length > 0 && !/^[a-z0-9_]{3,24}$/.test(handle.trim().toLowerCase())
+              ? handleValidityMessage
+              : null
+          }
+          helperText={handle.trim().length === 0 ? handleValidityMessage : 'Handles use 3 to 24 lowercase characters, numbers, or underscores.'}
+          label="Public handle"
+          required>
+          <ThemedTextInput
+            accessibilityHint="Choose the public handle shown on non-anonymous posts."
+            accessibilityLabel="Public handle"
+            autoCapitalize="none"
+            autoCorrect={false}
+            maxLength={24}
+            onChangeText={setHandle}
+            placeholder="sideroom_friend"
+            value={handle}
+          />
+        </FormField>
       </SectionCard>
 
       <SectionCard eyebrow="Topics" title="Pick 3 to 5 topics to shape the first feed">
@@ -126,15 +135,24 @@ export function OnboardingScreen() {
       <SectionCard eyebrow="Safety Notice" title="This must be accepted before the account is active">
         <ThemedText style={{ color: muted }}>{disclaimerText}</ThemedText>
         <PrimaryButton
+          accessibilityHint="Completes onboarding once your handle and 3 to 5 topics are ready."
+          busy={submitting}
           disabled={!canSubmit || submitting}
           label={submitting ? 'Securing your profile...' : 'Finish secure setup'}
           onPress={() => void handleSubmit()}
         />
-        {auth.notice ? (
-          <ThemedText style={[styles.helper, { color: muted }]}>{auth.notice}</ThemedText>
+        {!canSubmit ? (
+          <ThemedText style={[styles.helper, { color: muted }]}>
+            Finish a valid handle and choose 3 to 5 topics before setup can continue.
+          </ThemedText>
         ) : null}
+        {auth.notice ? <StateMessage message={auth.notice} title="Setup saved" tone="success" /> : null}
         {auth.authError ? (
-          <ThemedText style={[styles.helper, { color: danger }]}>{auth.authError}</ThemedText>
+          <StateMessage
+            message={auth.authError}
+            title="Setup could not finish"
+            tone="danger"
+          />
         ) : null}
       </SectionCard>
     </ScrollView>

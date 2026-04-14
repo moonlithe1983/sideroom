@@ -6,6 +6,7 @@ import { useAppAuth } from '@/components/auth/auth-provider';
 import { PostCard } from '@/components/community/post-card';
 import { PrimaryButton } from '@/components/primary-button';
 import { SectionCard } from '@/components/section-card';
+import { StateMessage } from '@/components/state-message';
 import { StatusPill } from '@/components/status-pill';
 import { useAppSecurity } from '@/components/security/app-security-provider';
 import { ThemedText } from '@/components/themed-text';
@@ -74,7 +75,6 @@ export default function ProfileScreen() {
   const background = useThemeColor({}, 'background');
   const accentSoft = useThemeColor({}, 'accentSoft');
   const border = useThemeColor({}, 'border');
-  const danger = useThemeColor({}, 'danger');
   const muted = useThemeColor({}, 'muted');
   const [savedPosts, setSavedPosts] = useState<CommunityProfilePost[]>([]);
   const [myPosts, setMyPosts] = useState<CommunityProfilePost[]>([]);
@@ -170,9 +170,21 @@ export default function ProfileScreen() {
           track their own threads, and understand any moderation changes without guessing.
         </ThemedText>
         {activityLoading ? (
-          <ThemedText style={{ color: muted }}>Loading your saved posts and authored threads...</ThemedText>
+          <StateMessage
+            message="SideRoom is loading your saved posts and authored threads."
+            title="Loading your activity"
+          />
         ) : null}
-        {activityError ? <ThemedText style={{ color: danger }}>{activityError}</ThemedText> : null}
+        {activityError ? (
+          <StateMessage
+            actionHint="Loads your saved posts and authored threads again."
+            actionLabel="Try again"
+            message={activityError}
+            onAction={() => void loadActivity()}
+            title="Activity could not load"
+            tone="danger"
+          />
+        ) : null}
       </SectionCard>
 
       <SectionCard eyebrow="Saved" title="Posts worth revisiting">
@@ -289,7 +301,12 @@ export default function ProfileScreen() {
           Use sign out for this device only. Use account deletion only if you want to permanently
           remove your SideRoom account from this environment.
         </ThemedText>
-        <PrimaryButton label="Sign out" onPress={() => void auth.signOut()} tone="secondary" />
+        <PrimaryButton
+          accessibilityHint="Signs this account out on the current device."
+          label="Sign out"
+          onPress={() => void auth.signOut()}
+          tone="secondary"
+        />
       </SectionCard>
 
       <SectionCard eyebrow="Account Deletion" title="Permanently remove your account">
@@ -302,9 +319,19 @@ export default function ProfileScreen() {
           casually.
         </ThemedText>
         {deletionAttempted && auth.authError ? (
-          <ThemedText style={{ color: danger }}>{auth.authError}</ThemedText>
+          <StateMessage
+            message={auth.authError}
+            title="Account deletion could not finish"
+            tone="danger"
+          />
         ) : null}
         <PrimaryButton
+          accessibilityHint={
+            auth.isStaff
+              ? 'Staff accounts must use the support-managed deletion path.'
+              : 'Permanently deletes this SideRoom account from the active environment.'
+          }
+          busy={deletingAccount}
           disabled={accountDeletionDisabled}
           label={deleteAccountLabel}
           onPress={handleDeleteAccount}

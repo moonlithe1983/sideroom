@@ -2,6 +2,7 @@ import { Link, type Href } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { SectionCard } from '@/components/section-card';
+import { StateMessage } from '@/components/state-message';
 import { StatusPill } from '@/components/status-pill';
 import { ThemedText } from '@/components/themed-text';
 import {
@@ -61,6 +62,11 @@ export default function TrustCenterScreen() {
       </SectionCard>
 
       <SectionCard eyebrow="Before Public Launch" title="What still needs to be finished">
+        <StateMessage
+          message="This list is intentionally plain and current so beta users, reviewers, and the team can see what still depends on live backend validation or owner decisions."
+          title="Still open before launch"
+          tone="warning"
+        />
         <TrustList items={launchTrustBlockers} muted={muted} />
       </SectionCard>
 

@@ -1,6 +1,6 @@
 # SideRoom Launch Readiness Plan
 
-## Current Recommendation As Of 2026-03-27
+## Current Recommendation As Of 2026-04-14
 
 Do not stop development yet.
 
@@ -58,6 +58,7 @@ Because SideRoom will contain personal information, these are release blockers:
 - Moderator tools, audit logs, and incident response basics are in place.
 - Account deletion works in-app for normal member accounts and the policy explains any retained safety records honestly.
 - Privacy policy, terms, and user-report handling process are ready before launch.
+- Public account-deletion request path is live and matches the in-app deletion behavior.
 
 ## Beta Validation Gate
 

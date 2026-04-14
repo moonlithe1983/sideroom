@@ -3,14 +3,17 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { useAppAuth } from '@/components/auth/auth-provider';
+import { FormField } from '@/components/form-field';
 import { PrimaryButton } from '@/components/primary-button';
 import { SectionCard } from '@/components/section-card';
 import { SelectableChip } from '@/components/selectable-chip';
+import { StateMessage } from '@/components/state-message';
 import { StatusPill } from '@/components/status-pill';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedTextInput } from '@/components/themed-text-input';
 import { disclaimerText } from '@/constants/project-status';
 import { createPost } from '@/lib/community/api';
+import { announceForAccessibility } from '@/lib/accessibility/announce';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import type { CommunityFeedPost } from '@/types/community';
 
@@ -28,7 +31,6 @@ export default function CreatePostScreen() {
   const background = useThemeColor({}, 'background');
   const accentSoft = useThemeColor({}, 'accentSoft');
   const border = useThemeColor({}, 'border');
-  const danger = useThemeColor({}, 'danger');
   const muted = useThemeColor({}, 'muted');
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(auth.topics[0]?.id ?? null);
   const [postType, setPostType] = useState<CommunityFeedPost['post_type']>('question');
@@ -55,9 +57,13 @@ export default function CreatePostScreen() {
         title,
         topicId: selectedTopicId,
       });
+      void announceForAccessibility('Post created. Opening your new thread.');
       router.push(`/post/${postId}`);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : 'Could not publish your post.');
+      void announceForAccessibility(
+        submitError instanceof Error ? submitError.message : 'Could not publish your post.'
+      );
     } finally {
       setSubmitting(false);
     }
@@ -66,7 +72,9 @@ export default function CreatePostScreen() {
   const canSubmit = selectedTopicId && title.trim().length >= 6 && title.trim().length <= 160;
 
   return (
-    <ScrollView contentContainerStyle={[styles.content, { backgroundColor: background }]}>
+    <ScrollView
+      contentContainerStyle={[styles.content, { backgroundColor: background }]}
+      keyboardShouldPersistTaps="handled">
       <View style={[styles.hero, { backgroundColor: accentSoft, borderColor: border }]}>
         <StatusPill label="Create post" tone="success" />
         <ThemedText type="title" style={styles.heroTitle}>
@@ -107,33 +115,57 @@ export default function CreatePostScreen() {
       <SectionCard eyebrow="Identity" title="Choose how this post appears in public">
         <View style={styles.chipGrid}>
           <SelectableChip
+            accessibilityHint="Keeps your public handle off the post while moderators can still trace it internally."
             label="Post anonymously"
             onPress={() => setIsAnonymous(true)}
             selected={isAnonymous}
           />
           <SelectableChip
+            accessibilityHint="Shows your public handle on the post."
             label={`Post as @${auth.profile?.handle ?? 'your_handle'}`}
             onPress={() => setIsAnonymous(false)}
             selected={!isAnonymous}
           />
         </View>
+        <StateMessage
+          message={
+            isAnonymous
+              ? 'Anonymous posts hide your public handle from other members. Moderators can still trace the post internally if safety review is needed.'
+              : `This post will show publicly as @${auth.profile?.handle ?? 'your_handle'}.`
+          }
+          title="How this identity setting works"
+          tone={isAnonymous ? 'warning' : 'default'}
+        />
       </SectionCard>
 
       <SectionCard eyebrow="Write" title="Describe what you need help with">
-        <ThemedTextInput
-          maxLength={160}
-          onChangeText={setTitle}
-          placeholder="How do I talk to my boss about burnout without sounding unreliable?"
-          value={title}
-        />
-        <ThemedTextInput
-          multiline
-          onChangeText={setBody}
-          placeholder="Add context if it will help people give better answers."
-          style={styles.bodyInput}
-          textAlignVertical="top"
-          value={body}
-        />
+        <FormField
+          helperText="Aim for a clear, specific title so people know what kind of help you need."
+          label="Post title"
+          required>
+          <ThemedTextInput
+            accessibilityHint="Enter a short summary of the question or situation."
+            accessibilityLabel="Post title"
+            maxLength={160}
+            onChangeText={setTitle}
+            placeholder="How do I talk to my boss about burnout without sounding unreliable?"
+            value={title}
+          />
+        </FormField>
+        <FormField
+          helperText="Context is optional but helps people give more useful answers."
+          label="Post details">
+          <ThemedTextInput
+            accessibilityHint="Add optional context for the people replying to your post."
+            accessibilityLabel="Post details"
+            multiline
+            onChangeText={setBody}
+            placeholder="Add context if it will help people give better answers."
+            style={styles.bodyInput}
+            textAlignVertical="top"
+            value={body}
+          />
+        </FormField>
         <ThemedText style={[styles.helper, { color: muted }]}>
           {title.trim().length}/160 title characters
         </ThemedText>
@@ -141,10 +173,15 @@ export default function CreatePostScreen() {
 
       <SectionCard eyebrow="Safety Notice" title="Every post must stay inside the product boundary">
         <ThemedText style={{ color: muted }}>{disclaimerText}</ThemedText>
-        {error ? (
-          <ThemedText style={{ color: danger }}>{error}</ThemedText>
+        {error ? <StateMessage message={error} title="Post could not be published" tone="danger" /> : null}
+        {!canSubmit ? (
+          <ThemedText style={{ color: muted }}>
+            Choose a topic and write a title with 6 to 160 characters before posting.
+          </ThemedText>
         ) : null}
         <PrimaryButton
+          accessibilityHint="Publishes this post using the topic and identity settings above."
+          busy={submitting}
           disabled={!canSubmit || submitting}
           label={submitting ? 'Publishing securely...' : 'Publish post'}
           onPress={() => void handleSubmit()}

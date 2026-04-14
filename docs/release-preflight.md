@@ -18,9 +18,10 @@ This is a local readiness check only. It does not contact Supabase, Google, or E
 - real Supabase env values exist locally instead of example placeholders
 - `app.json` has the important release fields we need to stop guessing
 - `eas.json` exists with development, preview, production, and submit profiles
-- `config/release-metadata.json` has real policy, support, and store-copy values instead of placeholders
+- `config/release-metadata.json` has real policy, support, account-deletion, and store-copy values instead of placeholders
 - the in-app Policies and Support surface can share that same metadata instead of drifting from store copy
 - the core launch docs and handoff docs exist
+- the accessibility baseline, accessibility checklist, and launch-gap audit docs exist
 - the device-smoke and preview-build runbooks exist
 - the Google Play submission checklist exists
 - the bootstrap SQL, launch-content source files, and required app assets exist
@@ -35,19 +36,21 @@ finish and verify:
 - the preview-build process in `docs/preview-build-runbook.md`
 - account deletion behavior for account-based releases
 - store screenshots and descriptions
-- privacy policy, terms, support contact, and marketing links
+- privacy policy, terms, support contact, marketing links, and the public account-deletion request path
 - reviewer notes and test accounts
 - live Supabase setup
 - final preview and production smoke tests
 
 ## Expected Blockers Right Now
 
-As of 2026-03-27, the main local blockers should still be:
+As of 2026-04-14, the main local blockers should still be:
 
 - no real Supabase env values yet
-- no real privacy-policy, terms, or support URLs in `config/release-metadata.json` yet
+- no real privacy-policy, terms, support, or account-deletion request URLs in `config/release-metadata.json` yet
 - no real support email in `config/release-metadata.json` yet
 - no real `seed-authors.json`, which means launch seed SQL is still template-only
+- no completed accessibility pass evidence yet
+- no completed real-device smoke-pass evidence yet
 
 Local repo hygiene is otherwise in a good place right now:
 

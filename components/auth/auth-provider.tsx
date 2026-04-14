@@ -13,6 +13,7 @@ import {
   useState,
 } from 'react';
 
+import { announceForAccessibility } from '@/lib/accessibility/announce';
 import { getSupabaseClient, supabaseConfig } from '@/lib/supabase/client';
 import type { TableRow } from '@/types/database';
 
@@ -213,6 +214,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       try {
         if (errorDescription) {
           setAuthError(errorDescription);
+          void announceForAccessibility(errorDescription);
           return;
         }
 
@@ -230,11 +232,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
         if (error) {
           setAuthError(error.message);
+          void announceForAccessibility(error.message);
           return;
         }
 
         handledAuthCodeRef.current = authCode;
-        setNotice('Authentication completed. SideRoom signed you in securely.');
+        const successMessage = 'Authentication completed. SideRoom signed you in securely.';
+        setNotice(successMessage);
+        void announceForAccessibility(successMessage);
         await loadUserContext();
       } finally {
         pendingAuthCodeRef.current = null;
@@ -290,12 +295,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
       const normalizedEmail = email.trim().toLowerCase();
 
       if (!supabase) {
-        setAuthError('Supabase is not configured yet.');
+        const message = 'Supabase is not configured yet.';
+        setAuthError(message);
+        void announceForAccessibility(message);
         return false;
       }
 
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
-        setAuthError('Enter a valid email address.');
+        const message = 'Enter a valid email address.';
+        setAuthError(message);
+        void announceForAccessibility(message);
         return false;
       }
 
@@ -312,11 +321,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       if (error) {
         setAuthError(error.message);
+        void announceForAccessibility(error.message);
         return false;
       }
 
       setLastMagicLinkEmail(normalizedEmail);
-      setNotice(`Check ${normalizedEmail} for your secure sign-in link.`);
+      const successMessage = `Check ${normalizedEmail} for your secure sign-in link.`;
+      setNotice(successMessage);
+      void announceForAccessibility(successMessage);
       return true;
     },
     [supabase]
@@ -325,7 +337,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const signInWithProvider = useCallback(
     async (provider: SupportedAuthProvider) => {
       if (!supabase) {
-        setAuthError('Supabase is not configured yet.');
+        const message = 'Supabase is not configured yet.';
+        setAuthError(message);
+        void announceForAccessibility(message);
         return false;
       }
 
@@ -351,23 +365,30 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       if (error) {
         setAuthError(error.message);
+        void announceForAccessibility(error.message);
         return false;
       }
 
       if (!data?.url) {
-        setAuthError(`${providerLabel} sign-in could not start.`);
+        const message = `${providerLabel} sign-in could not start.`;
+        setAuthError(message);
+        void announceForAccessibility(message);
         return false;
       }
 
       const result = await WebBrowser.openAuthSessionAsync(data.url, AUTH_REDIRECT_URL);
 
       if (result.type === 'cancel' || result.type === 'dismiss') {
-        setNotice(`${providerLabel} sign-in was canceled.`);
+        const message = `${providerLabel} sign-in was canceled.`;
+        setNotice(message);
+        void announceForAccessibility(message);
         return false;
       }
 
       if (result.type !== 'success' || !result.url) {
-        setAuthError(`${providerLabel} sign-in did not finish correctly.`);
+        const message = `${providerLabel} sign-in did not finish correctly.`;
+        setAuthError(message);
+        void announceForAccessibility(message);
         return false;
       }
 
@@ -380,7 +401,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const completeOnboarding = useCallback(
     async ({ handle, topicIds }: CompleteOnboardingInput) => {
       if (!supabase) {
-        setAuthError('Supabase is not configured yet.');
+        const message = 'Supabase is not configured yet.';
+        setAuthError(message);
+        void announceForAccessibility(message);
         return false;
       }
 
@@ -397,10 +420,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
       if (error) {
         setAuthError(error.message);
+        void announceForAccessibility(error.message);
         return false;
       }
 
-      setNotice('Onboarding completed. Your private account and public handle are ready.');
+      const successMessage = 'Onboarding completed. Your private account and public handle are ready.';
+      setNotice(successMessage);
+      void announceForAccessibility(successMessage);
       await loadUserContext();
       return true;
     },
@@ -409,7 +435,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const deleteAccount = useCallback(async () => {
     if (!supabase) {
-      setAuthError('Supabase is not configured yet.');
+      const message = 'Supabase is not configured yet.';
+      setAuthError(message);
+      void announceForAccessibility(message);
       return false;
     }
 
@@ -420,6 +448,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     if (error) {
       setAuthError(error.message);
+      void announceForAccessibility(error.message);
       return false;
     }
 
@@ -431,9 +460,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setAccount(null);
       setProfile(null);
     });
-    setNotice(
-      'Your SideRoom account and related community data were deleted from this app environment.'
-    );
+    const successMessage =
+      'Your SideRoom account and related community data were deleted from this app environment.';
+    setNotice(successMessage);
+    void announceForAccessibility(successMessage);
     return true;
   }, [supabase]);
 

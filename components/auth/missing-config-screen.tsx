@@ -2,6 +2,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { useAppAuth } from '@/components/auth/auth-provider';
 import { SectionCard } from '@/components/section-card';
+import { StateMessage } from '@/components/state-message';
 import { StatusPill } from '@/components/status-pill';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -27,6 +28,11 @@ export function MissingConfigScreen() {
       </View>
 
       <SectionCard eyebrow="Missing Environment" title="Variables still needed in local configuration">
+        <StateMessage
+          message="The app is working as designed: it stopped at setup instead of crashing because the backend values are still missing."
+          title="Why you are seeing this screen"
+          tone="warning"
+        />
         {auth.missingEnv.map((variableName) => (
           <ThemedText key={variableName} type="defaultSemiBold">
             {variableName}

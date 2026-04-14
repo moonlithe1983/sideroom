@@ -3,12 +3,16 @@ import { useCallback, useRef, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 
 import { CommentRow } from '@/components/community/comment-row';
+import { FormField } from '@/components/form-field';
 import { PrimaryButton } from '@/components/primary-button';
 import { SectionCard } from '@/components/section-card';
 import { SelectableChip } from '@/components/selectable-chip';
+import { StateMessage } from '@/components/state-message';
 import { StatusPill } from '@/components/status-pill';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedTextInput } from '@/components/themed-text-input';
+import { useReducedMotion } from '@/hooks/use-reduced-motion';
+import { announceForAccessibility } from '@/lib/accessibility/announce';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import {
   blockCommentAuthor,
@@ -75,8 +79,8 @@ export default function PostDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const scrollViewRef = useRef<ScrollView>(null);
+  const reduceMotionEnabled = useReducedMotion();
   const background = useThemeColor({}, 'background');
-  const danger = useThemeColor({}, 'danger');
   const muted = useThemeColor({}, 'muted');
   const [post, setPost] = useState<CommunityPostDetail | null>(null);
   const [comments, setComments] = useState<CommunityComment[]>([]);
@@ -124,7 +128,7 @@ export default function PostDetailScreen() {
 
   function scrollToSafetyTools() {
     scrollViewRef.current?.scrollTo({
-      animated: true,
+      animated: !reduceMotionEnabled,
       y: Math.max(safetySectionY - 18, 0),
     });
   }
@@ -156,11 +160,17 @@ export default function PostDetailScreen() {
           ? 'Post marked resolved. People can still read it and leave thoughtful follow-up replies.'
           : 'Post reopened. New replies can keep the conversation going.'
       );
-    } catch (statusError) {
-      setActionTone('danger');
-      setActionMessage(
-        statusError instanceof Error ? statusError.message : 'Could not update post status.'
+      void announceForAccessibility(
+        resolvedStatus === 'resolved'
+          ? 'Post marked resolved.'
+          : 'Post reopened for new replies.'
       );
+    } catch (statusError) {
+      const message =
+        statusError instanceof Error ? statusError.message : 'Could not update post status.';
+      setActionTone('danger');
+      setActionMessage(message);
+      void announceForAccessibility(message);
     } finally {
       setWorking(false);
     }
@@ -187,8 +197,10 @@ export default function PostDetailScreen() {
         viewer_vote: resolvedVote,
       });
     } catch (voteError) {
+      const message = voteError instanceof Error ? voteError.message : 'Vote failed.';
       setActionTone('danger');
-      setActionMessage(voteError instanceof Error ? voteError.message : 'Vote failed.');
+      setActionMessage(message);
+      void announceForAccessibility(message);
     } finally {
       setWorking(false);
     }
@@ -210,11 +222,15 @@ export default function PostDetailScreen() {
         helpful_count: post.helpful_count + (nextHelpfulState ? 1 : -1),
         viewer_marked_helpful: nextHelpfulState,
       });
-    } catch (helpfulError) {
-      setActionTone('danger');
-      setActionMessage(
-        helpfulError instanceof Error ? helpfulError.message : 'Helpful reaction failed.'
+      void announceForAccessibility(
+        nextHelpfulState ? 'Post marked helpful.' : 'Helpful mark removed.'
       );
+    } catch (helpfulError) {
+      const message =
+        helpfulError instanceof Error ? helpfulError.message : 'Helpful reaction failed.';
+      setActionTone('danger');
+      setActionMessage(message);
+      void announceForAccessibility(message);
     } finally {
       setWorking(false);
     }
@@ -235,9 +251,12 @@ export default function PostDetailScreen() {
         ...post,
         viewer_has_saved: nextSavedState,
       });
+      void announceForAccessibility(nextSavedState ? 'Post saved.' : 'Saved post removed.');
     } catch (saveError) {
+      const message = saveError instanceof Error ? saveError.message : 'Save failed.';
       setActionTone('danger');
-      setActionMessage(saveError instanceof Error ? saveError.message : 'Save failed.');
+      setActionMessage(message);
+      void announceForAccessibility(message);
     } finally {
       setWorking(false);
     }
@@ -264,9 +283,12 @@ export default function PostDetailScreen() {
         ...post,
         comment_count: nextComments.length,
       });
+      void announceForAccessibility('Comment submitted.');
     } catch (commentError) {
+      const message = commentError instanceof Error ? commentError.message : 'Comment failed.';
       setActionTone('danger');
-      setActionMessage(commentError instanceof Error ? commentError.message : 'Comment failed.');
+      setActionMessage(message);
+      void announceForAccessibility(message);
     } finally {
       setWorking(false);
     }
@@ -274,14 +296,18 @@ export default function PostDetailScreen() {
 
   async function handleReportSubmit() {
     if (!safetyTarget) {
+      const message = 'Choose the post or a comment before submitting a report.';
       setActionTone('danger');
-      setActionMessage('Choose the post or a comment before submitting a report.');
+      setActionMessage(message);
+      void announceForAccessibility(message);
       return;
     }
 
     if (!reportReason) {
+      const message = 'Choose a report reason before submitting.';
       setActionTone('danger');
-      setActionMessage('Choose a report reason before submitting.');
+      setActionMessage(message);
+      void announceForAccessibility(message);
       return;
     }
 
@@ -292,6 +318,7 @@ export default function PostDetailScreen() {
     try {
       if (safetyTarget.type === 'post') {
         await reportPost(safetyTarget.id, reportReason, reportDetails);
+        void announceForAccessibility('Report submitted. Returning to the home feed.');
         Alert.alert(
           'Report received',
           'Thanks. This post has been sent to moderation and removed from your view.'
@@ -305,9 +332,12 @@ export default function PostDetailScreen() {
       setReportReason('');
       await loadPost();
       setActionMessage('Comment reported. It will stay out of your view while it is reviewed.');
+      void announceForAccessibility('Report submitted.');
     } catch (reportError) {
+      const message = reportError instanceof Error ? reportError.message : 'Report failed.';
       setActionTone('danger');
-      setActionMessage(reportError instanceof Error ? reportError.message : 'Report failed.');
+      setActionMessage(message);
+      void announceForAccessibility(message);
     } finally {
       setWorking(false);
     }
@@ -324,14 +354,17 @@ export default function PostDetailScreen() {
 
     try {
       await blockPostAuthor(post.post_id);
+      void announceForAccessibility('Author blocked. Returning to the home feed.');
       Alert.alert(
         'Author blocked',
         "You will no longer see this member's posts or comments in SideRoom."
       );
       router.replace('/');
     } catch (blockError) {
+      const message = blockError instanceof Error ? blockError.message : 'Block failed.';
       setActionTone('danger');
-      setActionMessage(blockError instanceof Error ? blockError.message : 'Block failed.');
+      setActionMessage(message);
+      void announceForAccessibility(message);
     } finally {
       setWorking(false);
     }
@@ -368,9 +401,12 @@ export default function PostDetailScreen() {
       setReportReason('');
       await loadPost();
       setActionMessage('Author blocked. Their content is now hidden from your view.');
+      void announceForAccessibility('Author blocked. Their content is now hidden from your view.');
     } catch (blockError) {
+      const message = blockError instanceof Error ? blockError.message : 'Block failed.';
       setActionTone('danger');
-      setActionMessage(blockError instanceof Error ? blockError.message : 'Block failed.');
+      setActionMessage(message);
+      void announceForAccessibility(message);
     } finally {
       setWorking(false);
     }
@@ -396,7 +432,6 @@ export default function PostDetailScreen() {
     );
   }
 
-  const actionMessageColor = actionTone === 'danger' ? danger : muted;
   const postSafetyTarget = post ? buildPostSafetyTarget(post) : null;
   const postStatusMeta = post ? getPostStatusMeta(post.status) : null;
 
@@ -405,15 +440,26 @@ export default function PostDetailScreen() {
       <Stack.Screen options={{ title: post?.topic_name ?? 'Post' }} />
       <ScrollView
         contentContainerStyle={[styles.content, { backgroundColor: background }]}
+        keyboardShouldPersistTaps="handled"
         ref={scrollViewRef}>
         {loading ? (
           <SectionCard eyebrow="Loading" title="Pulling the conversation into view">
-            <ThemedText style={{ color: muted }}>Loading post details and comments...</ThemedText>
+            <StateMessage
+              message="Loading the post, comments, and safety tools for this thread."
+              title="Loading post"
+            />
           </SectionCard>
         ) : null}
         {error ? (
           <SectionCard eyebrow="Unavailable" title="This post could not be loaded">
-            <ThemedText style={{ color: danger }}>{error}</ThemedText>
+            <StateMessage
+              actionHint="Loads the post again."
+              actionLabel="Try again"
+              message={error}
+              onAction={() => void loadPost()}
+              title="Post could not be loaded"
+              tone="danger"
+            />
           </SectionCard>
         ) : null}
         {post ? (
@@ -436,21 +482,25 @@ export default function PostDetailScreen() {
               {post.body ? <ThemedText>{post.body}</ThemedText> : null}
               <View style={styles.chipGrid}>
                 <SelectableChip
+                  accessibilityHint="Adds an upvote to this post."
                   label={post.viewer_vote === 'upvote' ? 'Upvoted' : 'Upvote'}
                   onPress={() => void handleVote(post.viewer_vote === 'upvote' ? null : 'upvote')}
                   selected={post.viewer_vote === 'upvote'}
                 />
                 <SelectableChip
+                  accessibilityHint="Adds a downvote to this post."
                   label={post.viewer_vote === 'downvote' ? 'Downvoted' : 'Downvote'}
                   onPress={() => void handleVote(post.viewer_vote === 'downvote' ? null : 'downvote')}
                   selected={post.viewer_vote === 'downvote'}
                 />
                 <SelectableChip
+                  accessibilityHint="Marks this post as especially useful."
                   label={post.viewer_marked_helpful ? 'Helpful saved' : 'Mark helpful'}
                   onPress={() => void handleHelpfulToggle()}
                   selected={post.viewer_marked_helpful}
                 />
                 <SelectableChip
+                  accessibilityHint="Saves this post to your profile for later."
                   label={post.viewer_has_saved ? 'Saved' : 'Save'}
                   onPress={() => void handleSaveToggle()}
                   selected={post.viewer_has_saved}
@@ -536,15 +586,23 @@ export default function PostDetailScreen() {
                     />
                   ))}
                 </View>
-                <ThemedTextInput
-                  multiline
-                  onChangeText={setReportDetails}
-                  placeholder="Optional details for moderators"
-                  style={styles.detailsInput}
-                  textAlignVertical="top"
-                  value={reportDetails}
-                />
+                <FormField
+                  helperText="Add context only if it helps moderators understand the safety concern."
+                  label="Extra details for moderators">
+                  <ThemedTextInput
+                    accessibilityHint="Adds optional details for the moderation team."
+                    accessibilityLabel="Extra details for moderators"
+                    multiline
+                    onChangeText={setReportDetails}
+                    placeholder="Optional details for moderators"
+                    style={styles.detailsInput}
+                    textAlignVertical="top"
+                    value={reportDetails}
+                  />
+                </FormField>
                 <PrimaryButton
+                  accessibilityHint="Sends the selected report to the moderation queue."
+                  busy={working}
                   disabled={working || !safetyTarget || reportReason.length === 0}
                   label={
                     working
@@ -560,31 +618,53 @@ export default function PostDetailScreen() {
                   sends the content to moderation.
                 </ThemedText>
                 {actionMessage ? (
-                  <ThemedText style={{ color: actionMessageColor }}>{actionMessage}</ThemedText>
+                  <StateMessage
+                    message={actionMessage}
+                    title={
+                      actionTone === 'danger' ? 'Safety action could not finish' : 'Safety action updated'
+                    }
+                    tone={actionTone === 'danger' ? 'danger' : 'success'}
+                  />
                 ) : null}
               </SectionCard>
             </View>
 
             <SectionCard eyebrow="Reply" title="Add your perspective">
               {post.status === 'locked' ? (
-                <ThemedText style={{ color: muted }}>
-                  Replies are locked on this post, so no new comments can be added.
-                </ThemedText>
+                <StateMessage
+                  message="Replies are locked on this post, so no new comments can be added."
+                  title="Comments are locked"
+                  tone="warning"
+                />
               ) : (
                 <>
-                  <ThemedTextInput
-                    multiline
-                    onChangeText={setCommentBody}
-                    placeholder="Share practical advice or a useful perspective."
-                    style={styles.commentInput}
-                    textAlignVertical="top"
-                    value={commentBody}
-                  />
+                  <FormField
+                    helperText="Keep replies practical, calm, and within the product safety boundary."
+                    label="Your comment"
+                    required>
+                    <ThemedTextInput
+                      accessibilityHint="Write a reply to this post."
+                      accessibilityLabel="Your comment"
+                      multiline
+                      onChangeText={setCommentBody}
+                      placeholder="Share practical advice or a useful perspective."
+                      style={styles.commentInput}
+                      textAlignVertical="top"
+                      value={commentBody}
+                    />
+                  </FormField>
                   <PrimaryButton
+                    accessibilityHint="Submits this comment to the current post."
+                    busy={working}
                     disabled={working || commentBody.trim().length === 0}
                     label={working ? 'Posting...' : 'Post comment'}
                     onPress={() => void handleCommentSubmit()}
                   />
+                  {commentBody.trim().length === 0 ? (
+                    <ThemedText style={{ color: muted }}>
+                      Add your reply before the comment button becomes available.
+                    </ThemedText>
+                  ) : null}
                 </>
               )}
             </SectionCard>

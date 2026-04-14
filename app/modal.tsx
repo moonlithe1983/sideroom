@@ -2,6 +2,7 @@ import { Link, type Href } from 'expo-router';
 import { ScrollView, StyleSheet } from 'react-native';
 
 import { SectionCard } from '@/components/section-card';
+import { StateMessage } from '@/components/state-message';
 import { ThemedText } from '@/components/themed-text';
 import { disclaimerText, moderationTriggers } from '@/constants/project-status';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -21,6 +22,11 @@ export default function SafetyModalScreen() {
       <SectionCard
         eyebrow="Auto-Review Topics"
         title="Content that should trigger warning flows or moderator review.">
+        <StateMessage
+          message="If a post falls into one of these categories, users should report it and moderators should review it instead of relying on peer replies."
+          title="When moderation should step in"
+          tone="warning"
+        />
         {moderationTriggers.map((item) => (
           <ThemedText key={item} style={[styles.body, { color: muted }]}>
             - {item}

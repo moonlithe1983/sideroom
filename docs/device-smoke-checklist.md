@@ -43,6 +43,7 @@ Nice to have:
 4. Confirm Google auth is enabled in Supabase.
 5. Confirm seed content exists or the app has enough real test posts to avoid empty-state confusion.
 6. Install the latest preview build on the test devices.
+7. Bring `docs/accessibility-test-checklist.md` so TalkBack and focus issues are captured during the same pass.
 
 ## Pass / Fail Rule
 
@@ -138,7 +139,9 @@ Any security, privacy, auth, crash, or data-loss issue is a release blocker.
 
 - Open the safety modal.
 - Open the Trust Center.
+- Open the Policies and Support screen.
 - Confirm the language is clear, trustworthy, and not obviously placeholder copy.
+- Confirm the public account-deletion request path is visible even when the in-app deletion path also exists.
 
 ### 13. Account Deletion
 

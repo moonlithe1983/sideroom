@@ -6,10 +6,12 @@ import { useAppAuth } from '@/components/auth/auth-provider';
 import { ModerationReportCard } from '@/components/moderation/moderation-report-card';
 import { SectionCard } from '@/components/section-card';
 import { SelectableChip } from '@/components/selectable-chip';
+import { StateMessage } from '@/components/state-message';
 import { StatusPill } from '@/components/status-pill';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { getModerationQueue, resolveReport } from '@/lib/moderation/api';
+import { announceForAccessibility } from '@/lib/accessibility/announce';
 import type { ModerationAction, ModerationQueueItem, ModerationQueueStatus } from '@/types/moderation';
 
 const FILTERS: { label: string; value: ModerationQueueStatus }[] = [
@@ -72,7 +74,6 @@ export default function ModerationScreen() {
   const background = useThemeColor({}, 'background');
   const accentSoft = useThemeColor({}, 'accentSoft');
   const border = useThemeColor({}, 'border');
-  const danger = useThemeColor({}, 'danger');
   const muted = useThemeColor({}, 'muted');
   const [selectedStatus, setSelectedStatus] = useState<ModerationQueueStatus>('open');
   const [items, setItems] = useState<ModerationQueueItem[]>([]);
@@ -132,10 +133,15 @@ export default function ModerationScreen() {
 
     try {
       await resolveReport(item.report_id, action);
-      setNotice(`Action applied: ${buildActionCopy(action, item).buttonLabel}.`);
+      const successMessage = `Action applied: ${buildActionCopy(action, item).buttonLabel}.`;
+      setNotice(successMessage);
+      void announceForAccessibility(successMessage);
       await loadQueue();
     } catch (resolveError) {
-      setError(resolveError instanceof Error ? resolveError.message : 'Could not apply that moderation action.');
+      const message =
+        resolveError instanceof Error ? resolveError.message : 'Could not apply that moderation action.';
+      setError(message);
+      void announceForAccessibility(message);
     } finally {
       setWorkingReportId(null);
     }
@@ -186,13 +192,28 @@ export default function ModerationScreen() {
       </SectionCard>
 
       <SectionCard eyebrow="Reports" title="Moderation decisions">
-        {loading ? <ThemedText style={{ color: muted }}>Loading reports and safety metadata...</ThemedText> : null}
-        {error ? <ThemedText style={{ color: danger }}>{error}</ThemedText> : null}
-        {notice ? <ThemedText style={{ color: muted }}>{notice}</ThemedText> : null}
+        {loading ? (
+          <StateMessage
+            message="Loading the moderation queue and the latest report metadata."
+            title="Loading reports"
+          />
+        ) : null}
+        {error ? (
+          <StateMessage
+            actionHint="Loads the moderation queue again."
+            actionLabel="Try again"
+            message={error}
+            onAction={() => void loadQueue()}
+            title="Moderation action failed"
+            tone="danger"
+          />
+        ) : null}
+        {notice ? <StateMessage message={notice} title="Moderation updated" tone="success" /> : null}
         {!loading && !error && items.length === 0 ? (
-          <ThemedText style={{ color: muted }}>
-            No reports match this filter right now.
-          </ThemedText>
+          <StateMessage
+            message="No reports match this filter right now."
+            title="Nothing to review in this queue"
+          />
         ) : null}
         {items.map((item) => (
           <ModerationReportCard

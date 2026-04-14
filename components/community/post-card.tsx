@@ -55,7 +55,12 @@ export function PostCard({
   const combinedBadges = statusBadge ? [statusBadge, ...badges] : badges;
 
   return (
-    <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress}>
+    <Pressable
+      accessibilityHint="Opens the full post and comments."
+      accessibilityLabel={`${post.title}. ${post.comment_count} comments. ${post.helpful_count} helpful. ${post.net_votes} score.`}
+      accessibilityRole="button"
+      disabled={disabled}
+      onPress={onPress}>
       <SectionCard eyebrow={post.topic_name} title={post.title}>
         {combinedBadges.length > 0 ? (
           <View style={styles.badgeRow}>
@@ -105,8 +110,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   metaText: {
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
   },
   preview: {
     fontSize: 15,

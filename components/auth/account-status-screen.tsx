@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { useAppAuth } from '@/components/auth/auth-provider';
 import { PrimaryButton } from '@/components/primary-button';
 import { SectionCard } from '@/components/section-card';
+import { StateMessage } from '@/components/state-message';
 import { StatusPill } from '@/components/status-pill';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -50,11 +51,17 @@ export function AccountStatusScreen() {
       </SectionCard>
 
       <SectionCard eyebrow="Session" title="What you can do here">
-        <ThemedText style={{ color: muted }}>
-          You can safely sign out on this device. The app keeps this screen explicit so account
-          restrictions never feel like random loading failures or missing posts.
-        </ThemedText>
-        <PrimaryButton label="Sign out" onPress={() => void auth.signOut()} tone="secondary" />
+        <StateMessage
+          message="This screen is intentionally explicit so moderation restrictions never look like a broken app or missing content."
+          title="Clear next step"
+          tone="warning"
+        />
+        <PrimaryButton
+          accessibilityHint="Signs this account out on the current device."
+          label="Sign out"
+          onPress={() => void auth.signOut()}
+          tone="secondary"
+        />
       </SectionCard>
     </ScrollView>
   );

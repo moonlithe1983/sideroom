@@ -32,6 +32,7 @@ This is the last-mile operational list for shipping, not for feature development
 - The Policies and Support screen shows the same live links and contact paths as the store listing.
 - Privacy policy URL is live.
 - Support email or support URL is live.
+- Public account-deletion request page is live.
 - Data safety form is filled out from the real implementation.
 - Content rating questionnaire is answered conservatively.
 - Account deletion is available in-app for normal member accounts and the web/support documentation matches the real behavior.

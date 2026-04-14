@@ -35,7 +35,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   eyebrow: {
-    fontSize: 12,
+    fontSize: 13,
+    lineHeight: 18,
     letterSpacing: 0.8,
     textTransform: 'uppercase',
   },
