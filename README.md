@@ -107,7 +107,7 @@ Without real backend env values, the app should boot into the missing-config scr
 This repo now includes GitHub Actions workflows for:
 
 - validation on pull requests and pushes to `main`
-- dependency review on pull requests
+- dependency review on pull requests when GitHub dependency graph is available for the repository
 
 Recommended GitHub settings to turn on manually for `main`:
 

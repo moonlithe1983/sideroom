@@ -11,7 +11,7 @@ The current GitHub-ready repo state is:
 - `npm run audit:check` reports `0` vulnerabilities
 - `npm run doctor` passes `17/17`
 - the app boots into the missing-config gate when backend env values are absent
-- GitHub Actions workflows now cover validation and dependency review on pull requests
+- GitHub Actions workflows now cover validation and dependency review on pull requests, with dependency review skipping cleanly when GitHub dependency graph is not enabled
 - release preflight still reports only the expected external blockers instead of pretending the app is upload-ready
 
 ## What Is Implemented
@@ -46,7 +46,7 @@ The current GitHub-ready repo state is:
 - Dependency hardening until the local audit returned `0` vulnerabilities
 - Expo 55 / React Native 0.83 upgrade with current patch-alignment fixes
 - Native Android smoke boot completed successfully, and any generated local `android/` folder stays ignored by Git for local debugging
-- GitHub Actions validation and dependency-review workflows were added for pull requests
+- GitHub Actions validation and dependency-review workflows are present for pull requests, and the dependency-review workflow now degrades to a warning instead of a false red failure when repository dependency graph support is unavailable
 - Accessibility audit, universal-design baseline, accessibility checklist, moderation drills, account-deletion flow, and closed-beta readiness docs were added to the repo
 
 ## What Is Still Blocking Launch
