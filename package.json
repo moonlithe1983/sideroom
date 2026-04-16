@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
     "typecheck": "tsc --noEmit",
     "backend:preflight": "node ./scripts/supabase-preflight.js",
     "release:preflight": "node ./scripts/release-preflight.js",

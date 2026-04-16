@@ -17,6 +17,7 @@ The most important work completed on 2026-04-14 was launch-hardening and GitHub-
 - release preflight now checks for that account-deletion request path and warns when accessibility or real-device evidence is still pending
 - the dependency audit was cleaned again and now reports `0` vulnerabilities
 - Expo patch versions were refreshed so `npm run doctor` passes cleanly again
+- GitHub dependency-review workflow now skips with a warning instead of failing red when repository dependency graph support is unavailable
 
 The product is still not launch-ready. The largest remaining blockers are still live Supabase setup and validation, real Google auth validation, real seed content, real support and legal URLs, real-device smoke completion, and closed-beta execution.
 
